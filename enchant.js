@@ -982,8 +982,11 @@ enchant.EventTarget = enchant.Class.create({
                 stage.style.position = 'relative';
 
                 var bounding = stage.getBoundingClientRect();
-                this._pageX = Math.round(window.scrollX || window.pageXOffset + bounding.left);
-                this._pageY = Math.round(window.scrollY || window.pageYOffset + bounding.top);
+
+                // CodeFriends_20150801_Ozaki
+                this._pageX = Math.round(window.pageXOffset + bounding.left);
+                this._pageY = Math.round(window.pageYOffset + bounding.top);
+
             }
             stage.style.fontSize = '12px';
             stage.style.webkitTextSizeAdjust = 'none';
@@ -1082,14 +1085,13 @@ enchant.EventTarget = enchant.Class.create({
                 this.keybind(prop, enchant.ENV.KEY_BIND_TABLE[prop]);
             }
 
-            if (initial) {
+            if (true) {// CodeFriends_20150801_Ozaki
                 stage = enchant.Core.instance._element;
                 var evt;
                 document.addEventListener('keydown', function(e) {
                     core.dispatchEvent(new enchant.Event('keydown'));
                     if (enchant.ENV.PREVENT_DEFAULT_KEY_CODES.indexOf(e.keyCode) !== -1) {
-                        e.preventDefault();
-                        e.stopPropagation();
+                        // CodeFriends_20150801_Ozaki
                     }
                 }, true);
 
