@@ -1,6 +1,8 @@
 enchant.widget = enchant.widget || {};
 enchant.widget.assets = [];
 
+enchant.widget._env.FLINGVEL = 1;
+
 var NOTOUCH = 0;
 var WAITDBL = 1;
 var NOMOVE = 2;
