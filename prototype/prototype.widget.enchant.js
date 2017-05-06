@@ -7,7 +7,7 @@ enchant.widget.GestureDetector.prototype.ontouchend = function(e) {
         case MOVED:
             velocityX = (this._lastX - this._startX) / this._velobase / this._touchElapsed * 1000;
             velocityY = (this._lastY - this._startY) / this._velobase / this._touchElapsed * 1000;
-            if (velocityX > enchant.widget._env.FLINGVEL || velocityY > enchant.widget._env.FLINGVEL) {
+            if (Math.abs(velocityX) > enchant.widget._env.FLINGVEL || Math.abs(velocityY) > enchant.widget._env.FLINGVEL) {
                 var evt = new enchant.Event(enchant.Event.FLING);
                 evt.x = this._startX;
                 evt.y = this._startY;
