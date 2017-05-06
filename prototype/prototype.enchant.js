@@ -2,120 +2,31 @@
  * Entity
  */
 
+
 /**
- * 表示枠矩形のＸ座標の中心を設定します。
- * @return {Number} Ｘ座標の中心座標
- * @example
- * var sprite = new ExSprite(32, 32);
- * core.rootScene.addChild(sprite);
- * console.log(sprite.getCenterX());
+ * Spriteの中心のx座標.
+ * @type {Number}
  */
-enchant.Entity.prototype.getCenterX = function() {
-    return this.x + this.width / 2;
-};
+Object.defineProperty(enchant.Entity.prototype, "centerX", {
+    get: function centerX() {
+        return this.x + this.width / 2;
+    },
+    set: function centerX(x) {
+        this.x = x - this.width / 2;
+    }
+});
 /**
- * 表示枠矩形のＹ座標の中心を取得します。
- * @return {Number} Ｙ座標の中心座標
- * @example
- * var sprite = new ExSprite(32, 32);
- * core.rootScene.addChild(sprite);
- * console.log(sprite.getCenterY());
+ * Spriteの中心のy座標.
+ * @type {Number}
  */
-enchant.Entity.prototype.getCenterY = function() {
-    return this.y + this.height / 2;
-};
-/**
- * 表示枠矩形のＸ座標の最大値を取得します。
- * @return {Number} Ｘ座標の最大値
- * @example
- * var sprite = new ExSprite(32, 32);
- * core.rootScene.addChild(sprite);
- * console.log(sprite.getMaxX());
- */
-enchant.Entity.prototype.getMaxX = function() {
-    return this.x + this.width;
-};
-/**
- * 表示枠矩形のＹ座標の最大値を取得します。
- * @return {Number} Ｙ座標の最大値
- * @example
- * var sprite = new ExSprite(32, 32);
- * core.rootScene.addChild(sprite);
- * console.log(sprite.getMaxY());
- */
-enchant.Entity.prototype.getMaxY = function() {
-    return this.y + this.height;
-};
-/**
- * 表示枠矩形の座標の中心を設定します。
- * @param {Number} x Ｘ座標の中心座標
- * @param {Number} y Ｙ座標の中心座標
- * @example
- * var sprite = new ExSprite(32, 32);
- * sprite.setCenter(window.width / 2, window.height / 2);
- * core.rootScene.addChild(sprite);
- */
-enchant.Entity.prototype.setCenter = function(x, y) {
-    this.setCenterX(x);
-    this.setCenterY(y);
-};
-/**
- * 表示枠矩形のＸ座標の中心を設定します。
- * @param {Number} x Ｘ座標の中心座標
- * @example
- * var sprite = new ExSprite(32, 32);
- * sprite.setCenterX(window.width / 2);
- * core.rootScene.addChild(sprite);
- */
-enchant.Entity.prototype.setCenterX = function(x) {
-    this.x = x - this.width / 2;
-};
-/**
- * 表示枠矩形のＹ座標の中心を設定します。
- * @param {Number} y Ｙ座標の中心座標
- * @example
- * var sprite = new ExSprite(32, 32);
- * sprite.setCenterY(window.height / 2);
- * core.rootScene.addChild(sprite);
- */
-enchant.Entity.prototype.setCenterY = function(y) {
-    this.y = y - this.height / 2;
-};
-/**
- * 表示枠矩形の座標の最大値を設定します。
- * @param {Number} x Ｘ座標の最大値
- * @param {Number} y Ｙ座標の最大値
- * @example
- * var sprite = new ExSprite(32, 32);
- * sprite.setMax(window.width, window.height);
- * core.rootScene.addChild(sprite);
- */
-enchant.Entity.prototype.setMax = function(x, y) {
-    this.setMaxX(x);
-    this.setMaxY(y);
-};
-/**
- * 表示枠矩形のＸ座標の最大値を設定します。
- * @param {Number} x Ｘ座標の最大値
- * @example
- * var sprite = new ExSprite(32, 32);
- * sprite.setMaxX(window.width);
- * core.rootScene.addChild(sprite);
- */
-enchant.Entity.prototype.setMaxX = function(x) {
-    this.x = x - this.width;
-};
-/**
- * 表示枠矩形のＹ座標の最大値を設定します。
- * @param {Number} y Ｙ座標の最大値
- * @example
- * var sprite = new ExSprite(32, 32);
- * sprite.setMaxY(window.height);
- * core.rootScene.addChild(sprite);
- */
-enchant.Entity.prototype.setMaxY = function(y) {
-    this.y = y - this.height;
-};
+Object.defineProperty(enchant.Entity.prototype, "centerY", {
+    get: function centerY() {
+        return this.y + this.height / 2;
+    },
+    set: function centerX(x) {
+        this.y = y - this.height / 2;
+    }
+});
 
 enchant.Entity.prototype._intersectStrictOne = function(other) {
     if (this._dirty) {
@@ -188,16 +99,11 @@ enchant.Entity.prototype._intersectStrictOne = function(other) {
     }
 };
 
-
-/**
- * Node
- */
-
 /**
  * 指定オブジェクト内でx方向の中央寄せを行う。
  * @param {Object} [another] 基準となるオブジェクト。（省略時は親Nodeとなる）
  */
-enchant.Node.prototype.alignHorizontalCenterIn = function(another) {
+enchant.Entity.prototype.alignHorizontalCenterIn = function(another) {
     var parentNode = this.parentNode;
     if (another) parentNode = another;
     if (parentNode) {
@@ -208,13 +114,18 @@ enchant.Node.prototype.alignHorizontalCenterIn = function(another) {
  * 指定オブジェクト内でy方向の中央寄せを行う。
  * @param {Object} [another] 基準となるオブジェクト。（省略時は親Nodeとなる）
  */
-enchant.Node.prototype.alignVerticalCenterIn = function(another) {
+enchant.Entity.prototype.alignVerticalCenterIn = function(another) {
     var parentNode = this.parentNode;
     if (another) parentNode = another;
     if (parentNode) {
         this.y = parentNode.y + ~~(parentNode.height / 2) - ~~(this.height / 2);
     }
 };
+
+
+/**
+ * Node
+ */
 
 /**
  * Nodeの可動域を設定する
