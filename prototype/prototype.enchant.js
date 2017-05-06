@@ -23,7 +23,7 @@ Object.defineProperty(enchant.Entity.prototype, "centerY", {
     get: function centerY() {
         return this.y + this.height / 2;
     },
-    set: function centerX(x) {
+    set: function centerY(y) {
         this.y = y - this.height / 2;
     }
 });
