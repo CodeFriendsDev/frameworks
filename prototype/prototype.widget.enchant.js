@@ -1,6 +1,12 @@
 enchant.widget = enchant.widget || {};
 enchant.widget.assets = [];
 
+var NOTOUCH = 0;
+var WAITDBL = 1;
+var NOMOVE = 2;
+var NOMOVEDBL = 3;
+var MOVED = 4;
+var HOLD = 5;
 enchant.widget.GestureDetector.prototype.ontouchend = function(e) {
     var core = enchant.Core.instance;
     switch (this._state) {
