@@ -1,4 +1,8 @@
 enchant.Event = enchant.Event || {};
+enchant.Event.GAMEPAD_A = 'gamepadA';
+enchant.Event.GAMEPAD_B = 'gamepadB';
+enchant.Event.GAMEPAD_X = 'gamepadX';
+enchant.Event.GAMEPAD_Y = 'gamepadY';
 enchant.Event.GAMEPAD_LEFT = 'gamepadleft';
 enchant.Event.GAMEPAD_RIGHT = 'gamepadright';
 enchant.Event.GAMEPAD_UP = 'gamepadup';
@@ -20,6 +24,26 @@ enchant.GamePad = enchant.Class.create(enchant.EventTarget, {
                     var button = buttons[j];
                     // ボタン入力強度
                     if (button.pressed) {
+                        // A
+                        if (j==0) {
+                            e = new Event("gamepadA");
+                            this.dispatchEvent(e);
+                        }
+                        // B
+                        if (j==1) {
+                            e = new Event("gamepadB");
+                            this.dispatchEvent(e);
+                        }
+                        // X
+                        if (j==2) {
+                            e = new Event("gamepadX");
+                            this.dispatchEvent(e);
+                        }
+                        // Y
+                        if (j==3) {
+                            e = new Event("gamepadY");
+                            this.dispatchEvent(e);
+                        }
                         // UP
                         if (j==12) {
                             e = new Event("gamepadup");
