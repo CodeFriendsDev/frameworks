@@ -25,22 +25,22 @@ enchant.GamePad = enchant.Class.create(enchant.EventTarget, {
                     // ボタン入力強度
                     if (button.pressed) {
                         // A
-                        if (j==0) {
+                        if (j==1) {
                             e = new Event("gamepadA");
                             this.dispatchEvent(e);
                         }
                         // B
-                        if (j==1) {
+                        if (j==0) {
                             e = new Event("gamepadB");
                             this.dispatchEvent(e);
                         }
                         // X
-                        if (j==2) {
+                        if (j==3) {
                             e = new Event("gamepadX");
                             this.dispatchEvent(e);
                         }
                         // Y
-                        if (j==3) {
+                        if (j==2) {
                             e = new Event("gamepadY");
                             this.dispatchEvent(e);
                         }
