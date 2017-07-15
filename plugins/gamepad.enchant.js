@@ -8,15 +8,18 @@ enchant.Event.GAMEPAD_RIGHT = 'gamepadright';
 enchant.Event.GAMEPAD_UP = 'gamepadup';
 enchant.Event.GAMEPAD_DOWN = 'gamepaddown';
 enchant.GamePad = enchant.Class.create(enchant.EventTarget, {
-    initialize: function() {
+    initialize: function(playerId) {
         var core = enchant.Core.instance;
         enchant.EventTarget.call(this);
         this.addEventListener(Event.ENTER_FRAME, function(e) {
             var gamepad_list = navigator.getGamepads();
             for(i=0;i < gamepad_list.length;i++){
+                // playerId指定の場合はそのidのみ取得
+                if (playerId) if (playerId != i) continue;
                 // ゲームパッドを取得する（undefined 値の場合もある）
                 var gamepad = gamepad_list[i];
                 if(!gamepad) continue;
+                var mapping = gamepad.mapping;
                 var buttons = gamepad.buttons;
                 var n = buttons.length;
                 for(j=0;j < n;j++){
@@ -24,46 +27,44 @@ enchant.GamePad = enchant.Class.create(enchant.EventTarget, {
                     var button = buttons[j];
                     // ボタン入力強度
                     if (button.pressed) {
+                        e = new Event();
+                        e.buttons = {};
+                        e.buttons.pressed = button.pressed;
+                        e.buttons.value = button.value;
+                        e.buttons = button;
                         // A
                         if (j==1) {
-                            e = new Event("gamepadA");
-                            this.dispatchEvent(e);
+                            e.type = "gamepadA";
                         }
                         // B
                         if (j==0) {
-                            e = new Event("gamepadB");
-                            this.dispatchEvent(e);
+                            e.type = "gamepadB";
                         }
                         // X
                         if (j==3) {
-                            e = new Event("gamepadX");
-                            this.dispatchEvent(e);
+                            e.type = "gamepadX";
                         }
                         // Y
                         if (j==2) {
-                            e = new Event("gamepadY");
-                            this.dispatchEvent(e);
+                            e.type = "gamepadY";
                         }
                         // UP
                         if (j==12) {
-                            e = new Event("gamepadup");
-                            this.dispatchEvent(e);
+                            e.type = "gamepadup";
                         }
                         // DOWN
                         if (j==13) {
-                          e = new Event("gamepaddown");
-                          this.dispatchEvent(e);                        
+                            e.type = "gamepaddown";
                         }
                         // LEFT
                         if (j==14) {
-                          e = new Event("gamepadleft");
-                          this.dispatchEvent(e);                        
+                            e.type = "gamepadleft";
                         }
                         // RIGHT
                         if (j==15) {
-                          e = new Event("gamepadright");
-                          this.dispatchEvent(e);                        
+                            e.type = "gamepadright";
                         }
+                        this.dispatchEvent(e);
                     }
                 }
             }
