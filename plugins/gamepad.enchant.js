@@ -31,7 +31,6 @@ enchant.GamePad = enchant.Class.create(enchant.EventTarget, {
                         e.buttons = {};
                         e.buttons.pressed = button.pressed;
                         e.buttons.value = button.value;
-                        e.buttons = button;
                         // A
                         if (j==1) {
                             e.type = "gamepadA";
