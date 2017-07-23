@@ -56,7 +56,7 @@ enchant.GamePad = enchant.Class.create(enchant.EventTarget, {
             for(i=0;i < gamepad_list.length;i++){
                 var gamepad = gamepad_list[i];
                 if(!gamepad) continue;
-                if (this._playerId!==-1) if (this._playerId != i) continue;
+                if (this._playerId!==undefined) if (this._playerId != i) continue;
                 var mapping = gamepad.mapping;
                 var buttons = gamepad.buttons;
                 for(j=0;j < buttons.length;j++){
