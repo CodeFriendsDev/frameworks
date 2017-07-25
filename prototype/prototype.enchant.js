@@ -28,6 +28,26 @@ Object.defineProperty(enchant.Entity.prototype, "centerY", {
     }
 });
 
+
+enchant.Entity.prototype.getOrientedBoundingRect = function() {
+//    var w = this.width || 0;
+//    var h = this.height || 0;
+    var w = this.width - 1 || 0;
+    var h = this.height - 1 || 0;
+    var mat = this._matrix;
+    var m11w = mat[0] * w, m12w = mat[1] * w,
+        m21h = mat[2] * h, m22h = mat[3] * h,
+        mdx = mat[4], mdy = mat[5];
+
+    return {
+        leftTop: [ mdx, mdy ],
+        rightTop: [ m11w + mdx, m12w + mdy ],
+        leftBottom: [ m21h + mdx, m22h + mdy],
+        rightBottom: [ m11w + m21h + mdx, m12w + m22h + mdy]
+    };
+};
+
+
 enchant.Entity.prototype._intersectStrictOne = function(other) {
     if (this._dirty) {
         this._updateCoordinate();
@@ -89,6 +109,7 @@ enchant.Entity.prototype._intersectStrictOne = function(other) {
                     vy = py2 - py1;
                     c1 = (vx * dy1 - vy * dx1) / c;
                     c2 = (vx * dy2 - vy * dx2) / c;
+//                    if (0 < c1 && c1 < 1 && 0 < c2 && c2 < 1) {
                     if (0 <= c1 && c1 <= 1 && 0 <= c2 && c2 <= 1) {
                         return true;
                     }
