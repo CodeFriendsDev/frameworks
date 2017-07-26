@@ -8,10 +8,11 @@ var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 }(window));
-
+enchant.youtube.APEND_TAG = "body";
+enchant.youtube.CREATE_TAG = "div";
 
 enchant.youtube.YouTube = enchant.Class.create(enchant.EventTarget, {
-    initialize: function(appendTag, createTag, path, option) {
+    initialize: function(path, option) {
         enchant.EventTarget.call(this);
         var _id = path;
         this.path = path;
@@ -22,9 +23,9 @@ enchant.youtube.YouTube = enchant.Class.create(enchant.EventTarget, {
         this._stack = null;
         var _this = this;
 
-        var element = document.createElement(element); 
+        var element = document.createElement(enchant.youtube.CREATE_TAG); 
         element.id = _id; 
-        var objBody = document.getElementsByTagName(appendTag).item(0); 
+        var objBody = document.getElementsByTagName(enchant.youtube.APEND_TAG).item(0); 
         objBody.appendChild(element);
 
         this._player = new YT.Player(this.path, {
