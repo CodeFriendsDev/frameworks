@@ -287,3 +287,19 @@ enchant.Label.prototype.delayText = function(delayTime) {
         }, i * delayTime);
     }
 }
+
+/**
+ * Group
+ */
+enchant.Group.prototype.setCenterNode = function(child, parent) {
+    var _parentNode = parent || this.parentNode;
+    this.addEventListener(Event.ADDED_TO_SCENE, function(){
+        this.x = ~~(_parentNode.width / 2) - ~~(child.width / 2) - child.x;
+        this.y = ~~(_parentNode.height / 2) - ~~(child.height / 2) - child.y;
+    });
+    this.addEventListener(Event.ENTER_FRAME, function(){
+        this.x = ~~(_parentNode.width / 2) - ~~(child.width / 2) - child.x;
+        this.y = ~~(_parentNode.height / 2) - ~~(child.height / 2) - child.y;
+    });
+};
+
