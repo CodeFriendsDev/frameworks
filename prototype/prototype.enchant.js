@@ -303,3 +303,42 @@ enchant.Group.prototype.setCenterNode = function(child, parent) {
     });
 };
 
+/**
+ * Map
+ */
+enchant.Map.prototype.tileMapParser = function(title) {
+    if (!TileMaps) throw new Error("TileMaps is undefined (Tiled Map Editor)");
+
+    var _key;
+    if (title) {
+       _key = title;
+    } else {
+       _key = Object.keys(TileMaps)[0];
+    }
+
+    var _aryData = [];
+    var _aryCollision = [];
+    TileMaps[_key].layers.forEach(function(value, index) {
+        if (value.type != "tilelayer") return;
+        var _ary = [];
+        for (var i=0; i<value.height; i++) {
+            var _ary2 = [];
+            for (var j=0; j<value.width; j++) {
+            if (value.name == "collision") {
+                _ary2.push(value.data[value.width * i + j]);
+            } else {
+                _ary2.push(value.data[value.width * i + j]-1);
+            }
+            }
+            _ary.push(_ary2);
+        }
+        if (value.name == "collision") {
+            _aryCollision = _ary;
+        } else {
+            _aryData.push(_ary);
+        }
+
+    });
+    this.loadData.apply(this, _aryData);
+    this.collisionData = _aryCollision;
+}
