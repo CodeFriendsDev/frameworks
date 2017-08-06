@@ -306,6 +306,52 @@ enchant.Group.prototype.setCenterNode = function(child, parent) {
 /**
  * Map
  */
+enchant.Map.prototype._init = enchant.Map.prototype.initialize;
+enchant.Map.prototype.initialize = function(tileWidth, tileHeight) {
+    this._init(tileWidth, tileHeight);
+    this.childNodes = [];
+    this.addEventListener('render', function() {
+        for (var i = 0, l = this.childNodes.length; i < l; i++) {
+            this.childNodes[i]._dirty = true;
+        }
+    });
+};
+enchant.Map.prototype.addChild = function(node) {
+        if (node.parentNode) {
+            node.parentNode.removeChild(node);
+        }
+        this.childNodes.push(node);
+        node.parentNode = this;
+        var childAdded = new enchant.Event('childadded');
+        childAdded.node = node;
+        childAdded.next = null;
+        this.dispatchEvent(childAdded);
+        node.dispatchEvent(new enchant.Event('added'));
+        if (this.scene) {
+            node.scene = this.scene;
+            var addedToScene = new enchant.Event('addedtoscene');
+            node.dispatchEvent(addedToScene);
+        }
+        node._dirty = true;
+};
+enchant.Map.prototype.removeChild = function(node) {
+    var i;
+    if ((i = this.childNodes.indexOf(node)) !== -1) {
+        this.childNodes.splice(i, 1);
+        node.parentNode = null;
+        var childRemoved = new enchant.Event('childremoved');
+        childRemoved.node = node;
+        this.dispatchEvent(childRemoved);
+        node.dispatchEvent(new enchant.Event('removed'));
+        if (this.scene) {
+            node.scene = null;
+            var removedFromScene = new enchant.Event('removedfromscene');
+            node.dispatchEvent(removedFromScene);
+        }
+    }
+};
+enchant.Map.prototype.setCenterNode = enchant.Group.prototype.setCenterNode;
+
 enchant.Map.prototype.tileMapParser = function(title) {
     if (!TileMaps) throw new Error("TileMaps is undefined (Tiled Map Editor)");
 
@@ -342,3 +388,36 @@ enchant.Map.prototype.tileMapParser = function(title) {
     this.loadData.apply(this, _aryData);
     this.collisionData = _aryCollision;
 }
+
+/**
+ * Core
+ */
+enchant.TRANSITION = {
+    NONE : "none",
+    FADE : "fade"
+};
+enchant.Core.prototype.replaceScene = function(scene, transition) {
+    var _this = this;
+    if (transition==enchant.TRANSITION.FADE) {
+        var fadeScene = new Sprite(scene.width, scene.height);
+        fadeScene.backgroundColor = "black";
+        fadeScene.opacity = 0;
+        this.currentScene.addChild(fadeScene);
+        fadeScene.tl.fadeIn(20);
+        fadeScene.tl.then(function() {
+            _this.popScene();
+            scene.addChild(fadeScene);
+            fadeScene.tl.delay(20);
+            fadeScene.tl.fadeOut(20);
+            fadeScene.tl.then(function() {
+                this.remove();
+            });
+            return _this.pushScene(scene);
+            
+        });
+    } else {
+        this.popScene();
+        return this.pushScene(scene);
+    }
+};
+
