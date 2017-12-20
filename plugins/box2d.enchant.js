@@ -92,10 +92,12 @@ enchant.box2d = {};
              * @type {Nunber}
              */
             this.iterations = 10;
+            this._world;
             world = new b2World(
                 new b2Vec2(gravityX, gravityY)  //gravity
                 , true                          //allow sleep
             );
+            this._world = world;
         },
         /**
          * 物理シミュレーション内の時間を進める
