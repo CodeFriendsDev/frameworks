@@ -302,6 +302,61 @@ enchant.Group.prototype.setCenterNode = function(child, parent) {
         this.y = ~~(_parentNode.height / 2) - ~~(child.height / 2) - child.y;
     });
 };
+/**
+ * Scene
+ */
+enchant.Scene.prototype.setScrollRange = function(child, padding) {
+    // EnterFrameを解除
+    this.cancelScrollRange();
+    // 引数チェック
+    if (!child || !child.parentNode) return;
+    var _padding = {
+        top: arguments[1] || 0,
+        right: arguments[2] || arguments[1] || 0,
+        bottom: arguments[3] || arguments[1] || 0,
+        left: arguments[4] || arguments[2] || arguments[1] || 0
+    };
+    // paddingが設定可能最大値より大きい場合、paddingを再設定
+    if (_padding.left + _padding.right + child.width > this.width) {
+        var _diff = (_padding.left + _padding.right + child.width - this.width) / 2;
+        _padding.left -= _diff;
+        _padding.right -= _diff;
+    }
+    if (_padding.top + _padding.bottom + child.height> this.height) {
+        var _diff = (_padding.top + _padding.bottom + child.height - this.height) / 2;
+        _padding.top -= _diff;
+        _padding.bottom -= _diff;
+    }
+    // 対象が画面の表示領域からはみ出ようとした時にスクロールさせる
+    this._scrollRange = function() {
+        console.log(!child || !child.parentNode);
+        if (!child || !child.parentNode) this.cancelScrollRange();
+        // Left
+        if (child.x < _padding.left - this.x) {
+            this.x += (_padding.right - this.x) - child.x;
+        }
+        // Right
+        if (child.x + child.width > this.width - _padding.right - this.x) {
+            this.x -= child.x + child.width - (this.width - _padding.right - this.x);
+        }
+        // Top
+        if (child.y < _padding.top - this.y) {
+            this.y += (_padding.top - this.y) - child.y;
+        }
+        // Bottom
+        if (child.y + child.height > this.height - _padding.bottom - this.y) {
+            this.y -= child.y + child.height - (this.height - _padding.bottom - this.y);
+        }
+    }
+    this.addEventListener(Event.ENTER_FRAME, this._scrollRange);
+};
+enchant.Scene.prototype.cancelScrollRange = function() {
+    // EnterFrameを解除
+    if (this._scrollRange) {
+        this.removeEventListener(Event.ENTER_FRAME, this._scrollRange);
+        this._scrollRange = null;
+    }
+};
 
 /**
  * Map
@@ -413,11 +468,10 @@ enchant.Core.prototype.replaceScene = function(scene, transition) {
                 this.remove();
             });
             return _this.pushScene(scene);
-            
+
         });
     } else {
         this.popScene();
         return this.pushScene(scene);
     }
 };
-
