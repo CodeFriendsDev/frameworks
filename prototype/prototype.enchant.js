@@ -329,7 +329,6 @@ enchant.Scene.prototype.setScrollRange = function(child, padding) {
     }
     // 対象が画面の表示領域からはみ出ようとした時にスクロールさせる
     this._scrollRange = function() {
-        console.log(!child || !child.parentNode);
         if (!child || !child.parentNode) this.cancelScrollRange();
         // Left
         if (child.x < _padding.left - this.x) {
