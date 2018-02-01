@@ -333,7 +333,7 @@ enchant.Scene.prototype.setScrollRange = function(child, padding) {
         if (!child || !child.parentNode) this.cancelScrollRange();
         // Left
         if (child.x < _padding.left - this.x) {
-            this.x += (_padding.right - this.x) - child.x;
+            this.x += (_padding.left - this.x) - child.x;
         }
         // Right
         if (child.x + child.width > this.width - _padding.right - this.x) {
