@@ -29,13 +29,15 @@ function getRotation(originX, originY, destX, destY) {
 }
 
 function rot13(str) {
-    return str.split('').map.call(str, function(char) {
+    var i =[];
+    i = str.split('');
+    return i.map.call( i,function(char) {
         x = char.charCodeAt(0);
-        if (x < 65 || x > 90) {
-            return String.fromCharCode(x);
-        } else if (x < 78) {
+        if ((65 <= x && x < 78) || (97 <= x && x < 110)) {
             return String.fromCharCode(x + 13);
+        } else if ((78 <= x && x <= 90) || (110 <= x && x <= 122) ) {
+              return String.fromCharCode(x - 13);
         }
-        return String.fromCharCode(x - 13);
+        return String.fromCharCode(x);
     }).join('');
 }
