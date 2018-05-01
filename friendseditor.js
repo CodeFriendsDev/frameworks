@@ -17,13 +17,19 @@ function removeLocalStorage(key) {
     localStorage.removeItem(_createKey(key));
 }
 
-function _loadScript(url) {
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = url;
-    document.getElementsByTagName('head')[0].appendChild(script);
-};
- 
+function _loadScript(scripts) {
+    var i = 0;
+    (function appendScript() {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = scripts[i];
+        document.body.appendChild(script);
+        if (i++ < scripts.length) {
+            script.onload = appendScript;
+        }
+    })();
+}
+
 function loadScript(id, slot) {
     var nowTime = new Date();
     var time = nowTime.getFullYear();
@@ -32,5 +38,5 @@ function loadScript(id, slot) {
     time += "0" + nowTime.getHours().toString().slice(-2);
     time += "0" + nowTime.getMinutes().toString().slice(-2);
     time += "0" + nowTime.getSeconds().toString().slice(-2);
-    _loadScript("sources/" + id + "/main_" + slot + ".js?" + time);
+    _loadScript(["sources/" + id + "/main_" + slot + ".js?" + time]);
 }
