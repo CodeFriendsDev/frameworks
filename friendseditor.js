@@ -24,7 +24,7 @@ function _loadScript(scripts) {
         script.type = 'text/javascript';
         script.src = scripts[i];
         document.body.appendChild(script);
-        if (i++ < scripts.length) {
+        if (i++ < scripts.length - 1) {
             script.onload = appendScript;
         }
     })();
