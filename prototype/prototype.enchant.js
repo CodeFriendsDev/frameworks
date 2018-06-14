@@ -305,7 +305,10 @@ enchant.Group.prototype.setCenterNode = function(child, parent) {
 /**
  * Scene
  */
-enchant.Scene.prototype.setScrollRange = function(child, padding) {
+enchant.Group.prototype.setScrollRange = function(child, padding) {
+    var core = enchant.Core.instance;
+    this.width = this.width || core.rootScene.width;
+    this.height = this.height || core.rootScene.height;
     // EnterFrameを解除
     this.cancelScrollRange();
     // 引数チェック
@@ -346,14 +349,44 @@ enchant.Scene.prototype.setScrollRange = function(child, padding) {
         if (child.y + child.height > this.height - _padding.bottom - this.y) {
             this.y -= child.y + child.height - (this.height - _padding.bottom - this.y);
         }
+        if (this.scrollRotationEnabled) {
+            this.originX = child.centerX;
+            this.originY = child.centerY;
+            this.rotation = -child.rotation;
+        }
     }
-    this.addEventListener(Event.ENTER_FRAME, this._scrollRange);
+    this.addEventListener(Event.RENDER, this._scrollRange);
 };
-enchant.Scene.prototype.cancelScrollRange = function() {
+enchant.Group.prototype.cancelScrollRange = function() {
     // EnterFrameを解除
     if (this._scrollRange) {
-        this.removeEventListener(Event.ENTER_FRAME, this._scrollRange);
+        this.removeEventListener(Event.RENDER, this._scrollRange);
         this._scrollRange = null;
+    }
+};
+//enchant.Scene.prototype.setScrollRange = enchant.Group.prototype.setScrollRange;
+//enchant.Scene.prototype.cancelScrollRange = enchant.Group.prototype.cancelScrollRange;
+enchant.Group.prototype.setScrollRotation = function(child) {
+    var core = enchant.Core.instance;
+    this.width = this.width || core.rootScene.width;
+    this.height = this.height || core.rootScene.height;
+    // EnterFrameを解除
+    this.cancelScrollRotation();
+    // 引数チェック
+    if (!child || !child.parentNode) return;
+    this._scrollRotation = function() {
+        if (!child || !child.parentNode) this.cancelScrollRotation();
+        this.originX = child.centerX;
+        this.originY = child.centerY;
+        this.rotation = -child.rotation;
+    }
+    this.addEventListener(Event.RENDER, this._scrollRotation);
+};
+enchant.Group.prototype.cancelScrollRotation = function() {
+    // EnterFrameを解除
+    if (this._scrollRotation) {
+        this.removeEventListener(Event.RENDER, this._scrollRotation);
+        this._scrollRotation = null;
     }
 };
 
