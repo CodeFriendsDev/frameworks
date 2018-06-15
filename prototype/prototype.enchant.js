@@ -355,17 +355,15 @@ enchant.Group.prototype.setScrollRange = function(child, padding) {
             this.rotation = -child.rotation;
         }
     }
-    this.addEventListener(Event.RENDER, this._scrollRange);
+    this.addEventListener(Event.ENTER_FRAME, this._scrollRange);
 };
 enchant.Group.prototype.cancelScrollRange = function() {
     // EnterFrameを解除
     if (this._scrollRange) {
-        this.removeEventListener(Event.RENDER, this._scrollRange);
+        this.removeEventListener(Event.ENTER_FRAME, this._scrollRange);
         this._scrollRange = null;
     }
 };
-//enchant.Scene.prototype.setScrollRange = enchant.Group.prototype.setScrollRange;
-//enchant.Scene.prototype.cancelScrollRange = enchant.Group.prototype.cancelScrollRange;
 enchant.Group.prototype.setScrollRotation = function(child) {
     var core = enchant.Core.instance;
     this.width = this.width || core.rootScene.width;
