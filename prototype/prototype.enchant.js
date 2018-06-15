@@ -378,12 +378,12 @@ enchant.Group.prototype.setScrollRotation = function(child) {
         this.originY = child.centerY;
         this.rotation = -child.rotation;
     }
-    this.addEventListener(Event.RENDER, this._scrollRotation);
+    this.addEventListener(Event.ENTER_FRAME, this._scrollRotation);
 };
 enchant.Group.prototype.cancelScrollRotation = function() {
     // EnterFrameを解除
     if (this._scrollRotation) {
-        this.removeEventListener(Event.RENDER, this._scrollRotation);
+        this.removeEventListener(Event.ENTER_FRAME, this._scrollRotation);
         this._scrollRotation = null;
     }
 };
