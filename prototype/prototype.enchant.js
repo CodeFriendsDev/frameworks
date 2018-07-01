@@ -130,6 +130,7 @@ enchant.Entity.prototype.alignHorizontalCenterIn = function(another) {
     if (parentNode) {
         this.x = parentNode.x + ~~(parentNode.width / 2) - ~~(this.width / 2);
     }
+    return this;
 };
 /**
  * 指定オブジェクト内でy方向の中央寄せを行う。
@@ -141,6 +142,7 @@ enchant.Entity.prototype.alignVerticalCenterIn = function(another) {
     if (parentNode) {
         this.y = parentNode.y + ~~(parentNode.height / 2) - ~~(this.height / 2);
     }
+    return this;
 };
 
 
