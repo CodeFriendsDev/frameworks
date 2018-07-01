@@ -305,54 +305,91 @@ enchant.Group.prototype.setCenterNode = function(child, parent) {
 /**
  * Scene
  */
+
+enchant.Group.prototype._scrollRangeTarget = null;
+Object.defineProperty(enchant.Group.prototype, "scrollRangeTarget", {
+    get: function scrollRangeTarget() {
+        return this._scrollRangeTarget;
+    },
+    set: function scrollRangeTarget(value) {
+        this._scrollRangeTarget = value;
+    }
+});
+enchant.Group.prototype._scrollRotationAngle = null;
+Object.defineProperty(enchant.Group.prototype, "scrollRotationAngle", {
+    get: function scrollRotationAngle() {
+        return this._scrollRotationAngle;
+    },
+    set: function scrollRotationAngle(value) {
+        this._scrollRotationAngle = value;
+    }
+});
+enchant.Group.prototype._scrollRotationEnabled = false;
+Object.defineProperty(enchant.Group.prototype, "scrollRotationEnabled", {
+    get: function scrollRotationEnabled() {
+        return this._scrollRotationEnabled;
+    },
+    set: function scrollRotationEnabled(value) {
+        this._scrollRotationEnabled = value;
+    }
+});
+
 enchant.Group.prototype.setScrollRange = function(child, padding) {
     var core = enchant.Core.instance;
     this.width = this.width || core.rootScene.width;
     this.height = this.height || core.rootScene.height;
     // EnterFrameを解除
     this.cancelScrollRange();
-    // 引数チェック
-    if (!child || !child.parentNode) return;
     var _padding = {
-        top: arguments[1] || 0,
-        right: arguments[2] || arguments[1] || 0,
-        bottom: arguments[3] || arguments[1] || 0,
-        left: arguments[4] || arguments[2] || arguments[1] || 0
+        top: isFinite(arguments[1])
+                ? arguments[1] : 0,
+        right: isFinite(arguments[2])
+                ? arguments[2] : isFinite(arguments[1])
+                ? arguments[1] : 0,
+        bottom: isFinite(arguments[3])
+                ? arguments[3] : isFinite(arguments[1])
+                ? arguments[1] : 0,
+        left: isFinite(arguments[4])
+                ? arguments[4] : isFinite(arguments[2])
+                ? arguments[2] : isFinite(arguments[1])
+                ? arguments[1] : 0
     };
-    // paddingが設定可能最大値より大きい場合、paddingを再設定
-    if (_padding.left + _padding.right + child.width > this.width) {
-        var _diff = (_padding.left + _padding.right + child.width - this.width) / 2;
-        _padding.left -= _diff;
-        _padding.right -= _diff;
-    }
-    if (_padding.top + _padding.bottom + child.height> this.height) {
-        var _diff = (_padding.top + _padding.bottom + child.height - this.height) / 2;
-        _padding.top -= _diff;
-        _padding.bottom -= _diff;
-    }
     // 対象が画面の表示領域からはみ出ようとした時にスクロールさせる
+    this._scrollRangeTarget = child;
     this._scrollRange = function() {
-        if (!child || !child.parentNode) this.cancelScrollRange();
+        if (!this._scrollRangeTarget || !this._scrollRangeTarget.parentNode) return;
+        if (!this._scrollRangeTarget || !this._scrollRangeTarget.parentNode) this.cancelScrollRange();
+        // paddingが設定可能最大値より大きい場合、paddingを再設定
+        if (_padding.left + _padding.right + this._scrollRangeTarget.width > this.width) {
+            var _diff = (_padding.left + _padding.right + this._scrollRangeTarget.width - this.width) / 2;
+            _padding.left -= _diff;
+            _padding.right -= _diff;
+        }
+        if (_padding.top + _padding.bottom + this._scrollRangeTarget.height> this.height) {
+            var _diff = (_padding.top + _padding.bottom + this._scrollRangeTarget.height - this.height) / 2;
+            _padding.top -= _diff;
+            _padding.bottom -= _diff;
+        }
         // Left
-        if (child.x < _padding.left - this.x) {
-            this.x += (_padding.left - this.x) - child.x;
+        if (_padding.left != null && this._scrollRangeTarget.x < _padding.left - this.x) {
+            this.x += (_padding.left - this.x) - this._scrollRangeTarget.x;
         }
         // Right
-        if (child.x + child.width > this.width - _padding.right - this.x) {
-            this.x -= child.x + child.width - (this.width - _padding.right - this.x);
+        if (_padding.right != null && this._scrollRangeTarget.x + this._scrollRangeTarget.width > this.width - _padding.right - this.x) {
+            this.x -= this._scrollRangeTarget.x + this._scrollRangeTarget.width - (this.width - _padding.right - this.x);
         }
         // Top
-        if (child.y < _padding.top - this.y) {
-            this.y += (_padding.top - this.y) - child.y;
+        if (_padding.top != null && this._scrollRangeTarget.y < _padding.top - this.y) {
+            this.y += (_padding.top - this.y) - this._scrollRangeTarget.y;
         }
         // Bottom
-        if (child.y + child.height > this.height - _padding.bottom - this.y) {
-            this.y -= child.y + child.height - (this.height - _padding.bottom - this.y);
+        if (_padding.bottom != null && this._scrollRangeTarget.y + this._scrollRangeTarget.height > this.height - _padding.bottom - this.y) {
+            this.y -= this._scrollRangeTarget.y + this._scrollRangeTarget.height - (this.height - _padding.bottom - this.y);
         }
-        if (this.scrollRotationEnabled) {
-            this.originX = child.centerX;
-            this.originY = child.centerY;
-            this.rotation = -child.rotation;
+        if (this._scrollRotationEnabled) {
+            this.originX = this.width / 2 - this.x;
+            this.originY = this.height / 2 - this.y;
+            this.rotation = this._scrollRotationAngle || -this._scrollRangeTarget.rotation;
         }
     }
     this.addEventListener(Event.ENTER_FRAME, this._scrollRange);
@@ -362,29 +399,9 @@ enchant.Group.prototype.cancelScrollRange = function() {
     if (this._scrollRange) {
         this.removeEventListener(Event.ENTER_FRAME, this._scrollRange);
         this._scrollRange = null;
-    }
-};
-enchant.Group.prototype.setScrollRotation = function(child) {
-    var core = enchant.Core.instance;
-    this.width = this.width || core.rootScene.width;
-    this.height = this.height || core.rootScene.height;
-    // EnterFrameを解除
-    this.cancelScrollRotation();
-    // 引数チェック
-    if (!child || !child.parentNode) return;
-    this._scrollRotation = function() {
-        if (!child || !child.parentNode) this.cancelScrollRotation();
-        this.originX = child.centerX;
-        this.originY = child.centerY;
-        this.rotation = -child.rotation;
-    }
-    this.addEventListener(Event.ENTER_FRAME, this._scrollRotation);
-};
-enchant.Group.prototype.cancelScrollRotation = function() {
-    // EnterFrameを解除
-    if (this._scrollRotation) {
-        this.removeEventListener(Event.ENTER_FRAME, this._scrollRotation);
-        this._scrollRotation = null;
+        this._scrollRangeTarget = null;
+        this._scrollRotationAngle = null;
+        this._scrollRotationEnabled = false;
     }
 };
 
