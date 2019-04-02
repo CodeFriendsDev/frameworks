@@ -555,3 +555,41 @@ enchant.Core.prototype.replaceScene = function(scene, transition=TRANSITION.NONE
         });
     }
 };
+
+/**
+ * addKeyDownEventListener
+ *
+ * @example
+ * scene.addKeyDownEventListener("test", function() {
+ *     console.log("dispatch KeyDown Event");
+ * });
+ */
+enchant.Group.prototype.addKeyDownEventListener = function(text, callback, length=255) {
+    var core = enchant.Core.instance;
+    if (!core._addKeyDownEventListener) {
+        core._addKeyDownEventListener = function(e) {
+            core._keyDownHistoryText += e.key;
+            if (core._keyDownHistoryText.length > length) {
+                core._keyDownHistoryText = core._keyDownHistoryText.slice(1);
+            }
+        }
+        window.addEventListener("keydown", core._addKeyDownEventListener);
+    }
+    var keyDownEvent = function(e) {
+        var reg = new RegExp(text);
+        if (core._keyDownHistoryText.match(reg)) {
+            core._keyDownHistoryText = "";
+            callback(e);
+        }
+    };
+    core._keyDownHistoryText = "";
+    window.addEventListener("keydown", keyDownEvent);
+    var _scene = this.scene || this;
+    _scene.on(Event.ENTER, function() {
+        window.addEventListener("keydown", keyDownEvent);
+    });
+    _scene.on(Event.EXIT, function() {
+        window.removeEventListener("keydown", keyDownEvent);
+    });
+}
+enchant.Core.prototype.addKeyDownEventListener = enchant.Group.prototype.addKeyDownEventListener;
