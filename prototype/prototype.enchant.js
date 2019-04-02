@@ -4,7 +4,7 @@
 
 
 /**
- * Spriteの中心のx座標.
+ *Entityの中心のx座標.
  * @type {Number}
  */
 Object.defineProperty(enchant.Entity.prototype, "centerX", {
@@ -16,7 +16,7 @@ Object.defineProperty(enchant.Entity.prototype, "centerX", {
     }
 });
 /**
- * Spriteの中心のy座標.
+ * Entityの中心のy座標.
  * @type {Number}
  */
 Object.defineProperty(enchant.Entity.prototype, "centerY", {
@@ -27,7 +27,30 @@ Object.defineProperty(enchant.Entity.prototype, "centerY", {
         this.y = y - this.height / 2;
     }
 });
-
+/**
+ * Entityの右端のx座標.
+ * @type {Number}
+ */
+ Object.defineProperty(enchant.Entity.prototype, "bottomX", {
+     get: function bottomX() {
+         return this.x + this.width;
+     },
+     set: function bottomX(x) {
+         this.x = x - this.width;
+     }
+ });
+/**
+ * Entityの下端のy座標.
+ * @type {Number}
+ */
+Object.defineProperty(enchant.Entity.prototype, "bottomY", {
+    get: function bottomY() {
+        return this.y + this.height;
+    },
+    set: function bottomY(y) {
+        this.y = y - this.height;
+    }
+});
 
 enchant.Entity.prototype.getOrientedBoundingRect = function() {
 //    var w = this.width || 0;
