@@ -565,31 +565,31 @@ enchant.Core.prototype.replaceScene = function(scene, transition=TRANSITION.NONE
  * });
  */
 enchant.Group.prototype.addKeyDownEventListener = function(text, callback, length=255) {
-    var core = enchant.Core.instance;
-    if (!core._addKeyDownEventListener) {
-        core._addKeyDownEventListener = function(e) {
-            core._keyDownHistoryText += e.key;
-            if (core._keyDownHistoryText.length > length) {
-                core._keyDownHistoryText = core._keyDownHistoryText.slice(1);
+    var _addKeyDownEventListener;
+    var _keyDownHistoryText;
+    if (!_addKeyDownEventListener) {
+        _addKeyDownEventListener = function(e) {
+            _keyDownHistoryText += e.key;
+            if (_keyDownHistoryText.length > length) {
+                _keyDownHistoryText = _keyDownHistoryText.slice(1);
+            }
+            var reg = new RegExp(text);
+            if (_keyDownHistoryText.match(reg)) {
+                _keyDownHistoryText = "";
+                callback(e);
             }
         }
-        window.addEventListener("keydown", core._addKeyDownEventListener);
+        _keyDownHistoryText = "";
     }
-    var keyDownEvent = function(e) {
-        var reg = new RegExp(text);
-        if (core._keyDownHistoryText.match(reg)) {
-            core._keyDownHistoryText = "";
-            callback(e);
-        }
-    };
-    core._keyDownHistoryText = "";
-    window.addEventListener("keydown", keyDownEvent);
-    var _scene = this.scene || this;
-    _scene.on(Event.ENTER, function() {
-        window.addEventListener("keydown", keyDownEvent);
-    });
-    _scene.on(Event.EXIT, function() {
-        window.removeEventListener("keydown", keyDownEvent);
-    });
+    if (this.scene) {
+        this.scene.on(Event.ENTER, function() {
+            window.addEventListener("keydown", _addKeyDownEventListener);
+        });
+        this.scene.on(Event.EXIT, function() {
+            window.removeEventListener("keydown", _addKeyDownEventListener);
+        });
+    } else {
+        window.addEventListener("keydown", _addKeyDownEventListener);
+    }
 }
 enchant.Core.prototype.addKeyDownEventListener = enchant.Group.prototype.addKeyDownEventListener;
