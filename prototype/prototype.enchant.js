@@ -521,29 +521,37 @@ enchant.Map.prototype.tileMapParser = function(title) {
  */
 enchant.TRANSITION = {
     NONE : "none",
-    FADE : "fade"
+    FADE : "fade",
+    FADEOUT : "fadeout",
+    FADEIN : "fadein",
 };
-enchant.Core.prototype.replaceScene = function(scene, transition) {
+window.TRANSITION = enchant.TRANSITION;
+enchant.Core.prototype.replaceScene = function(scene, transition=TRANSITION.NONE, fadetime=20, fadecolor="black") {
     var _this = this;
-    if (transition==enchant.TRANSITION.FADE) {
+    if (transition==TRANSITION.NONE) {
+        this.popScene();
+        return this.pushScene(scene);
+    } else {
         var fadeScene = new Sprite(scene.width, scene.height);
-        fadeScene.backgroundColor = "black";
+        fadeScene.backgroundColor = fadecolor;
         fadeScene.opacity = 0;
         this.currentScene.addChild(fadeScene);
-        fadeScene.tl.fadeIn(20);
+        if (transition!=TRANSITION.FADEIN) {
+            fadeScene.tl.fadeIn(fadetime);
+        } else {
+            fadeScene.opacity = 1;
+        }
         fadeScene.tl.then(function() {
             _this.popScene();
             scene.addChild(fadeScene);
-            fadeScene.tl.delay(20);
-            fadeScene.tl.fadeOut(20);
-            fadeScene.tl.then(function() {
-                this.remove();
-            });
             return _this.pushScene(scene);
-
         });
-    } else {
-        this.popScene();
-        return this.pushScene(scene);
+        if (transition!=TRANSITION.FADEOUT) {
+            fadeScene.tl.delay(fadetime);
+            fadeScene.tl.fadeOut(fadetime);
+        }
+        fadeScene.tl.then(function() {
+            this.remove();
+        });
     }
 };
