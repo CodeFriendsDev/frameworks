@@ -73,6 +73,12 @@ enchant.Core.prototype.start = function(deferred) {
     }
 
     this._requestNextFrame(0);
+    this.ready = false;
+    setTimeout(function() {
+        var core = enchant.Core.instance;
+        core.ready = true;
+        core._requestNextFrame(0);
+    }, 100);
 
     var ret = this._requestPreload()
         .next(function() {
