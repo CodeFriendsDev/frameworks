@@ -40,3 +40,53 @@ function loadScript(id, slot) {
     time += "0" + nowTime.getSeconds().toString().slice(-2);
     _loadScript(["sources/" + id + "/main_" + slot + ".js?" + time]);
 }
+
+enchant.Core.prototype.start = function(deferred) {
+    var onloadTimeSetter = function() {
+        this.frame = 0;
+        this.removeEventListener('load', onloadTimeSetter);
+    };
+    this.addEventListener('load', onloadTimeSetter);
+
+    this.currentTime = window.getTime();
+    this.running = true;
+    this.ready = true;
+
+    if (!this._activated) {
+        this._activated = true;
+        if (enchant.ENV.BROWSER === 'mobilesafari' &&
+            enchant.ENV.USE_WEBAUDIO &&
+            enchant.ENV.USE_TOUCH_TO_START_SCENE) {
+            var d = new enchant.Deferred();
+            var scene = this._createTouchToStartScene();
+            scene.addEventListener(enchant.Event.TOUCH_START, function waitTouch() {
+                this.removeEventListener(enchant.Event.TOUCH_START, waitTouch);
+                var a = new enchant.WebAudioSound();
+                a.buffer = enchant.WebAudioSound.audioContext.createBuffer(1, 1, 48000);
+                a.play();
+                core.removeScene(scene);
+                core.start(d);
+            }, false);
+            core.pushScene(scene);
+            return d;
+        }
+    }
+
+    this._requestNextFrame(0);
+
+    var ret = this._requestPreload()
+        .next(function() {
+            enchant.Core.instance.loadingScene.dispatchEvent(new enchant.Event(enchant.Event.LOAD));
+        });
+
+    if (deferred) {
+        ret.next(function(arg) {
+            deferred.call(arg);
+        })
+        .error(function(arg) {
+            deferred.fail(arg);
+        });
+    }
+
+    return ret;
+}
