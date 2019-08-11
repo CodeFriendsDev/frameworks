@@ -1091,7 +1091,8 @@ enchant.EventTarget = enchant.Class.create({
                 document.addEventListener('keydown', function(e) {
                     core.dispatchEvent(new enchant.Event('keydown'));
                     if (enchant.ENV.PREVENT_DEFAULT_KEY_CODES.indexOf(e.keyCode) !== -1) {
-                        // CodeFriends_20150801_Ozaki
+                        e.preventDefault();
+                        e.stopPropagation();
                     }
                 }, true);
 
