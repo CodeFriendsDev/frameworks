@@ -97,13 +97,15 @@ enchant.Core.prototype.start = function(deferred) {
     return ret;
 }
 
-enchant.ENV._PREVENT_DEFAULT_KEY_CODES = enchant.ENV.PREVENT_DEFAULT_KEY_CODES;
-$(".ex-code-prettify-edit").click(function() {
-    enchant.ENV.PREVENT_DEFAULT_KEY_CODES = [];
-});
-$(".ex-code-prettify-save").click(function() {
-    enchant.ENV.PREVENT_DEFAULT_KEY_CODES = enchant.ENV._PREVENT_DEFAULT_KEY_CODES;
-});
-$(".ex-code-prettify-cancel").click(function() {
-    enchant.ENV.PREVENT_DEFAULT_KEY_CODES = enchant.ENV._PREVENT_DEFAULT_KEY_CODES;
-});
+(function() {
+    enchant.ENV._PREVENT_DEFAULT_KEY_CODES = enchant.ENV.PREVENT_DEFAULT_KEY_CODES;
+    $(".ex-code-prettify-edit").click(function() {
+        enchant.ENV.PREVENT_DEFAULT_KEY_CODES = [];
+    });
+    $(".ex-code-prettify-save").click(function() {
+        enchant.ENV.PREVENT_DEFAULT_KEY_CODES = enchant.ENV._PREVENT_DEFAULT_KEY_CODES;
+    });
+    $(".ex-code-prettify-cancel").click(function() {
+        enchant.ENV.PREVENT_DEFAULT_KEY_CODES = enchant.ENV._PREVENT_DEFAULT_KEY_CODES;
+    });
+}());
