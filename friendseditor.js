@@ -96,3 +96,19 @@ enchant.Core.prototype.start = function(deferred) {
 
     return ret;
 }
+
+$(".ex-code-prettify-contents").ready(function() {
+    enchant.ENV._PREVENT_DEFAULT_KEY_CODES = enchant.ENV.PREVENT_DEFAULT_KEY_CODES;
+    $(".ex-code-prettify-edit").click(function() {
+        console.log("edit");
+        enchant.ENV.PREVENT_DEFAULT_KEY_CODES = [];
+    });
+    $(".ex-code-prettify-save").click(function() {
+        console.log("save");
+        enchant.ENV.PREVENT_DEFAULT_KEY_CODES = enchant.ENV._PREVENT_DEFAULT_KEY_CODES;
+    });
+    $(".ex-code-prettify-cancel").click(function() {
+        console.log("cancel");
+        enchant.ENV.PREVENT_DEFAULT_KEY_CODES = enchant.ENV._PREVENT_DEFAULT_KEY_CODES;
+    });
+});
