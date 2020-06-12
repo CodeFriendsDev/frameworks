@@ -516,6 +516,103 @@ enchant.Map.prototype.tileMapParser = function(title) {
     this.collisionData = _aryCollision;
 }
 
+enchant.Map.prototype.parseMap = function (title, collision, visible = true) {
+    if (!TileMaps) throw new Error("TileMaps is undefined (Tiled Map Editor)");
+
+    var _collision = [];
+    if (!collision) {
+        _collision = ["collision"];
+    } else if (collision instanceof Array) {
+        collision.forEach(function (value, index) {
+            _collision.push(value);
+        });
+    } else {
+        _collision = [collision];
+    }
+    var _key;
+    if (title) {
+        _key = title;
+    } else {
+        _key = Object.keys(TileMaps)[0];
+    }
+
+    var tileWidth = TileMaps[_key].width;
+    var tileHeight = TileMaps[_key].height;
+    var _loadData = [];
+    var _collisionData = new Array(tileHeight);
+    for (var i = 0; i < _collisionData.length; i++) {
+        _collisionData[i] = new Array(tileWidth).fill(0);
+    }
+    TileMaps[_key].layers.forEach(function (value, index) {
+        //  judge(value);
+
+        (function judge(value) {
+            if (!value.visible) return;
+            if (value.type == "tilelayer") {
+                analyze(value);
+            } else if (value.type == "group") {
+                value.layers.forEach(function (value, index) {
+                    judge(value);
+                });
+            }
+        }(value));
+
+        function analyze(value) {
+            // 衝突オブジェクト判定
+            // collisionでない場合、オフセットを(-1)とする
+            var isCollision;
+            var _offset = 0;
+            if (_collision.indexOf(value.name) < 0) {
+                isCollision = false;
+                _offset = -1;
+            } else {
+                isCollision = true;
+                _offset = 0;
+            }
+            var _height = value.height;
+            var _width = value.width;
+            var _startx = value.startx || 0;
+            var _starty = value.starty || 0;
+
+            // 初期化
+            var _ary = new Array(_height + _starty);
+            for (var i = 0; i < _ary.length; i++) {
+                _ary[i] = new Array(_width + _startx).fill(_offset);
+            }
+            var dataAnalize = function (value) {
+                var width = value.width;
+                var height = value.height;
+                var x = value.x;
+                var y = value.y;
+                value.data.forEach(function (value, index) {
+                    var i = y + Math.floor(index / width);
+                    var j = x + index % width;
+                    if (isCollision)
+                        if (_collisionData[i][j] == 0) _collisionData[i][j] = value;
+                    if (visible) _ary[i][j] = value - 1;
+                });
+            }
+            if (value.chunks) {
+                value.chunks.forEach(function (value, index) {
+                    dataAnalize(value)
+                });
+            } else {
+                dataAnalize(value)
+            }
+            if (visible) _loadData.push(_ary);
+        }
+
+    });
+    if (_loadData.length == 0) {
+        var _loadData = new Array(tileHeight);
+        for (var i = 0; i < _loadData.length; i++) {
+            _loadData[i] = new Array(tileWidth).fill(-1);
+        }
+    }
+    this.loadData.apply(this, _loadData);
+    if (_collisionData.length > 0) this.collisionData = _collisionData;
+}
+
 /**
  * Core
  */
