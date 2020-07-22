@@ -604,10 +604,11 @@ enchant.Map.prototype.parseMap = function (title, collision, visible = true) {
 
     });
     if (_loadData.length == 0) {
-        var _loadData = new Array(tileHeight);
-        for (var i = 0; i < _loadData.length; i++) {
-            _loadData[i] = new Array(tileWidth).fill(-1);
+        var _arrayHeight = new Array(tileHeight);
+        for (var i = 0; i < _arrayHeight.length; i++) {
+            _arrayHeight[i] = new Array(tileWidth).fill(-1);
         }
+        var _loadData = new Array(_arrayHeight);
     }
     this.loadData.apply(this, _loadData);
     if (_collisionData.length > 0) this.collisionData = _collisionData;
