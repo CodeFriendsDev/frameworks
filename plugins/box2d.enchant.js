@@ -59,26 +59,26 @@ var DrawJointColor = '#00eeee';
 
 
 var b2Vec2 = Box2D.Common.Math.b2Vec2
-, b2AABB = Box2D.Collision.b2AABB
-, b2BodyDef = Box2D.Dynamics.b2BodyDef
-, b2Body = Box2D.Dynamics.b2Body
-, b2FixtureDef = Box2D.Dynamics.b2FixtureDef
-, b2Fixture = Box2D.Dynamics.b2Fixture
-, b2World = Box2D.Dynamics.b2World
-, b2MassData = Box2D.Collision.Shapes.b2MassData
-, b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
-, b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
-, b2Shape = Box2D.Collision.Shapes.b2Shape
-, b2DebugDraw = Box2D.Dynamics.b2DebugDraw
-, b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef
-, b2Math = Box2D.Common.Math.b2Math
-, b2Joint = Box2D.Dynamics.Joints.b2Joint
-, b2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef
-, b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef
-, b2PulleyJointDef = Box2D.Dynamics.Joints.b2PulleyJointDef
-, b2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef
-, b2GearJointDef = Box2D.Dynamics.Joints.b2GearJointDef
-;
+    , b2AABB = Box2D.Collision.b2AABB
+    , b2BodyDef = Box2D.Dynamics.b2BodyDef
+    , b2Body = Box2D.Dynamics.b2Body
+    , b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+    , b2Fixture = Box2D.Dynamics.b2Fixture
+    , b2World = Box2D.Dynamics.b2World
+    , b2MassData = Box2D.Collision.Shapes.b2MassData
+    , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape
+    , b2CircleShape = Box2D.Collision.Shapes.b2CircleShape
+    , b2Shape = Box2D.Collision.Shapes.b2Shape
+    , b2DebugDraw = Box2D.Dynamics.b2DebugDraw
+    , b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef
+    , b2Math = Box2D.Common.Math.b2Math
+    , b2Joint = Box2D.Dynamics.Joints.b2Joint
+    , b2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef
+    , b2RevoluteJointDef = Box2D.Dynamics.Joints.b2RevoluteJointDef
+    , b2PulleyJointDef = Box2D.Dynamics.Joints.b2PulleyJointDef
+    , b2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef
+    , b2GearJointDef = Box2D.Dynamics.Joints.b2GearJointDef
+    ;
 
 
 /**
@@ -125,6 +125,7 @@ enchant.PhysicsWorld = enchant.Class.create({
             new b2Vec2(gravityX, gravityY)  //gravity
             , true                          //allow sleep
         );
+        this._world = world;
     },
     /**
     * 物理シミュレーション内の時間を進める
@@ -310,7 +311,7 @@ enchant.PhySprite = enchant.Class.create(enchant.Sprite, {
         bodyDef.awake = (awake !== undefined ? awake : true);
         bodyDef.userData = this;
         this.body = world.CreateBody(bodyDef).CreateFixture(fixDef);
-        this.setDegugImage();
+        // this.setDegugImage();
         return this.body;
     },
     /**
@@ -339,7 +340,7 @@ enchant.PhySprite = enchant.Class.create(enchant.Sprite, {
         bodyDef.awake = (awake !== undefined ? awake : true);
         bodyDef.userData = this;
         this.body = world.CreateBody(bodyDef).CreateFixture(fixDef);
-        this.setDegugImage();
+        // this.setDegugImage();
         return this.body;
     },
     /**
@@ -363,7 +364,7 @@ enchant.PhySprite = enchant.Class.create(enchant.Sprite, {
         bodyDef.awake = (awake !== undefined ? awake : true);
         bodyDef.userData = this;
         this.body = world.CreateBody(bodyDef).CreateFixture(fixDef);
-        this.setDegugImage();
+        // this.setDegugImage();
         return this.body;
     },
     /**
@@ -1177,3 +1178,24 @@ enchant.PhyPrismaticJoint = enchant.Class.create(enchant.BaseJoint, {
 //        this.joint = world.CreateJoint(jointDef);
 //    }
 //});
+
+// 旧バージョンに対応
+/**
+ * @type {Object}
+ */
+enchant.box2d = {};
+/**
+ * Spriteの種類（スタティック）
+ * @type {Number}
+ */
+enchant.box2d.STATIC_SPRITE = 0;
+/**
+ * Spriteの種類（ダイナミック）
+ * @type {Number}
+ */
+enchant.box2d.DYNAMIC_SPRITE = 2;
+
+enchant.box2d.PhysicsWorld = enchant.PhysicsWorld;
+enchant.box2d.PhySprite = enchant.PhySprite;
+enchant.box2d.PhyBoxSprite = enchant.PhyBoxSprite;
+enchant.box2d.PhyCircleSprite = enchant.PhyCircleSprite;
