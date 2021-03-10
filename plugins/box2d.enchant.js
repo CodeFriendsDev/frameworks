@@ -685,7 +685,7 @@ enchant.PhySprite = enchant.Class.create(enchant.Sprite, {
         if (this.scene !== null) {
             world.DestroyBody(this.body.m_body);
             this.body.Destroy();
-            this.scene.removeChild(this);
+            this.parentNode.removeChild(this);
         }
     },
     /**
