@@ -31,14 +31,14 @@ Object.defineProperty(enchant.Entity.prototype, "centerY", {
  * Entityの右端のx座標.
  * @type {Number}
  */
- Object.defineProperty(enchant.Entity.prototype, "bottomX", {
-     get: function bottomX() {
-         return this.x + this.width;
-     },
-     set: function bottomX(x) {
-         this.x = x - this.width;
-     }
- });
+Object.defineProperty(enchant.Entity.prototype, "bottomX", {
+    get: function bottomX() {
+        return this.x + this.width;
+    },
+    set: function bottomX(x) {
+        this.x = x - this.width;
+    }
+});
 /**
  * Entityの下端のy座標.
  * @type {Number}
@@ -52,9 +52,9 @@ Object.defineProperty(enchant.Entity.prototype, "bottomY", {
     }
 });
 
-enchant.Entity.prototype.getOrientedBoundingRect = function() {
-//    var w = this.width || 0;
-//    var h = this.height || 0;
+enchant.Entity.prototype.getOrientedBoundingRect = function () {
+    //    var w = this.width || 0;
+    //    var h = this.height || 0;
     var w = this.width - 1 || 0;
     var h = this.height - 1 || 0;
     var mat = this._matrix;
@@ -63,15 +63,15 @@ enchant.Entity.prototype.getOrientedBoundingRect = function() {
         mdx = mat[4], mdy = mat[5];
 
     return {
-        leftTop: [ mdx, mdy ],
-        rightTop: [ m11w + mdx, m12w + mdy ],
-        leftBottom: [ m21h + mdx, m22h + mdy],
-        rightBottom: [ m11w + m21h + mdx, m12w + m22h + mdy]
+        leftTop: [mdx, mdy],
+        rightTop: [m11w + mdx, m12w + mdy],
+        leftBottom: [m21h + mdx, m22h + mdy],
+        rightBottom: [m11w + m21h + mdx, m12w + m22h + mdy]
     };
 };
 
 
-enchant.Entity.prototype._intersectStrictOne = function(other) {
+enchant.Entity.prototype._intersectStrictOne = function (other) {
     if (this._dirty) {
         this._updateCoordinate();
     } if (other._dirty) {
@@ -87,14 +87,14 @@ enchant.Entity.prototype._intersectStrictOne = function(other) {
         lbx1 = lb1[0], lby1 = lb1[1], rbx1 = rb1[0], rby1 = rb1[1],
         ltx2 = lt2[0], lty2 = lt2[1], rtx2 = rt2[0], rty2 = rt2[1],
         lbx2 = lb2[0], lby2 = lb2[1], rbx2 = rb2[0], rby2 = rb2[1],
-        t1 = [ rtx1 - ltx1, rty1 - lty1 ],
-        r1 = [ rbx1 - rtx1, rby1 - rty1 ],
-        b1 = [ lbx1 - rbx1, lby1 - rby1 ],
-        l1 = [ ltx1 - lbx1, lty1 - lby1 ],
-        t2 = [ rtx2 - ltx2, rty2 - lty2 ],
-        r2 = [ rbx2 - rtx2, rby2 - rty2 ],
-        b2 = [ lbx2 - rbx2, lby2 - rby2 ],
-        l2 = [ ltx2 - lbx2, lty2 - lby2 ],
+        t1 = [rtx1 - ltx1, rty1 - lty1],
+        r1 = [rbx1 - rtx1, rby1 - rty1],
+        b1 = [lbx1 - rbx1, lby1 - rby1],
+        l1 = [ltx1 - lbx1, lty1 - lby1],
+        t2 = [rtx2 - ltx2, rty2 - lty2],
+        r2 = [rbx2 - rtx2, rby2 - rty2],
+        b2 = [lbx2 - rbx2, lby2 - rby2],
+        l2 = [ltx2 - lbx2, lty2 - lby2],
         cx1 = (ltx1 + rtx1 + lbx1 + rbx1) >> 2,
         cy1 = (lty1 + rty1 + lby1 + rby1) >> 2,
         cx2 = (ltx2 + rtx2 + lbx2 + rbx2) >> 2,
@@ -112,10 +112,10 @@ enchant.Entity.prototype._intersectStrictOne = function(other) {
         l2[0] * (cy1 - lby2) - l2[1] * (cx1 - lbx2) > 0) {
         return true;
     } else {
-        poss1 = [ lt1, rt1, rb1, lb1 ];
-        poss2 = [ lt2, rt2, rb2, lb2 ];
-        dirs1 = [ t1, r1, b1, l1 ];
-        dirs2 = [ t2, r2, b2, l2 ];
+        poss1 = [lt1, rt1, rb1, lb1];
+        poss2 = [lt2, rt2, rb2, lb2];
+        dirs1 = [t1, r1, b1, l1];
+        dirs2 = [t2, r2, b2, l2];
         for (i = 0; i < 4; i++) {
             pos1 = poss1[i];
             px1 = pos1[0]; py1 = pos1[1];
@@ -132,7 +132,7 @@ enchant.Entity.prototype._intersectStrictOne = function(other) {
                     vy = py2 - py1;
                     c1 = (vx * dy1 - vy * dx1) / c;
                     c2 = (vx * dy2 - vy * dx2) / c;
-//                    if (0 < c1 && c1 < 1 && 0 < c2 && c2 < 1) {
+                    //                    if (0 < c1 && c1 < 1 && 0 < c2 && c2 < 1) {
                     if (0 <= c1 && c1 <= 1 && 0 <= c2 && c2 <= 1) {
                         return true;
                     }
@@ -147,7 +147,7 @@ enchant.Entity.prototype._intersectStrictOne = function(other) {
  * 指定オブジェクト内でx方向の中央寄せを行う。
  * @param {Object} [another] 基準となるオブジェクト。（省略時は親Nodeとなる）
  */
-enchant.Entity.prototype.alignHorizontalCenterIn = function(another) {
+enchant.Entity.prototype.alignHorizontalCenterIn = function (another) {
     var parentNode = this.parentNode;
     if (another) parentNode = another;
     if (parentNode) {
@@ -159,7 +159,7 @@ enchant.Entity.prototype.alignHorizontalCenterIn = function(another) {
  * 指定オブジェクト内でy方向の中央寄せを行う。
  * @param {Object} [another] 基準となるオブジェクト。（省略時は親Nodeとなる）
  */
-enchant.Entity.prototype.alignVerticalCenterIn = function(another) {
+enchant.Entity.prototype.alignVerticalCenterIn = function (another) {
     var parentNode = this.parentNode;
     if (another) parentNode = another;
     if (parentNode) {
@@ -182,11 +182,11 @@ enchant.Entity.prototype.alignVerticalCenterIn = function(another) {
  * @param {Object} [rangeRight] 右側の可動域
  */
 enchant.Node.prototype._rangeOfMotionArg = null;
-enchant.Node.prototype.setRangeOfMotion = function(target, rangeTop, rangeBottom, rangeLeft, rangeRight) {
-    if (rangeTop==null)  throw new Error("rangeTop is undefined (enchant.Node.setRangeOfMotion)");
-    if (rangeBottom==null)  throw new Error("rangeBottom is undefined (enchant.Node.setRangeOfMotion)");
-    if (rangeLeft==null)  throw new Error("rangeLeft is undefined (enchant.Node.setRangeOfMotion)");
-    if (rangeRight==null)  throw new Error("rangeRight is undefined (enchant.Node.setRangeOfMotion)");
+enchant.Node.prototype.setRangeOfMotion = function (target, rangeTop, rangeBottom, rangeLeft, rangeRight) {
+    if (rangeTop == null) throw new Error("rangeTop is undefined (enchant.Node.setRangeOfMotion)");
+    if (rangeBottom == null) throw new Error("rangeBottom is undefined (enchant.Node.setRangeOfMotion)");
+    if (rangeLeft == null) throw new Error("rangeLeft is undefined (enchant.Node.setRangeOfMotion)");
+    if (rangeRight == null) throw new Error("rangeRight is undefined (enchant.Node.setRangeOfMotion)");
     this._rangeOfMotion = {
         target: target,
         rangeTop: rangeTop,
@@ -194,7 +194,7 @@ enchant.Node.prototype.setRangeOfMotion = function(target, rangeTop, rangeBottom
         rangeLeft: rangeLeft,
         rangeRight: rangeRight
     };
-    this.addEventListener(Event.ENTER_FRAME, function() {
+    this.addEventListener(Event.ENTER_FRAME, function () {
         this._rangeOfMotionArg = arguments.callee;
         var target = this._rangeOfMotion.target;
         if (target._offsetY < this._rangeOfMotion.rangeTop) {
@@ -211,17 +211,17 @@ enchant.Node.prototype.setRangeOfMotion = function(target, rangeTop, rangeBottom
         }
     });
 };
-enchant.Node.prototype.removeRangeOfMotion = function(origin, rangeTop, rangeBottom, rangeLeft, rangeRight) {
+enchant.Node.prototype.removeRangeOfMotion = function (origin, rangeTop, rangeBottom, rangeLeft, rangeRight) {
     if (this._rangeOfMotionArg) {
         this.removeEventListener(Event.ENTER_FRAME, this._rangeOfMotionArg);
         this._rangeOfMotionArg = null;
     }
 };
 enchant.Node.prototype.isfollowRelativeBased = true;
-enchant.Node.prototype.setfollowRelativeBased = function() {
+enchant.Node.prototype.setfollowRelativeBased = function () {
     this.isfollowRelativeBased = true;
 }
-enchant.Node.prototype.setfollowAbsoluteBased = function() {
+enchant.Node.prototype.setfollowAbsoluteBased = function () {
     this.isfollowRelativeBased = false;
 }
 /**
@@ -239,13 +239,13 @@ enchant.Node.prototype.setfollowAbsoluteBased = function() {
  * //sprite.tl.moveTo(10, 10, 10);
  *
  */
-enchant.Node.prototype.follow = function(target) {
+enchant.Node.prototype.follow = function (target) {
     this.unfollow();
     this._followTarget = target;
     this._followTargetHistory = {};
     this._followTargetHistory.x = this._followTarget.x;
     this._followTargetHistory.y = this._followTarget.y;
-    this.addEventListener(Event.ENTER_FRAME, function() {
+    this.addEventListener(Event.ENTER_FRAME, function () {
         this._followArg = arguments.callee;
         if (this.isfollowRelativeBased == true) {
             this.x += this._followTarget.x - this._followTargetHistory.x;
@@ -259,7 +259,7 @@ enchant.Node.prototype.follow = function(target) {
 /**
  * followを解除します。
  */
-enchant.Node.prototype.unfollow = function() {
+enchant.Node.prototype.unfollow = function () {
     if (this._followArg) {
         this.removeEventListener(Event.ENTER_FRAME, this._followArg);
         this._followArg = null;
@@ -271,14 +271,14 @@ enchant.Node.prototype.unfollow = function() {
  * Sprite
  */
 
-enchant.Sprite.prototype.border = function(width, color, radius) {
+enchant.Sprite.prototype.border = function (width, color, radius) {
     var surface = new Surface(this.width, this.height);
     if (this.image) surface.draw(this.image);
     this.image = surface;
     surface.context.lineWidth = width;
     surface.context.strokeStyle = color;
     roundedRect(surface, 0, 0, surface.width, surface.height, radius);
-    function roundedRect(surface, x, y, width, height, radius){
+    function roundedRect(surface, x, y, width, height, radius) {
         var ctx = surface.context;
         var image = surface.clone();
         surface.clear();
@@ -301,13 +301,13 @@ enchant.Sprite.prototype.border = function(width, color, radius) {
  * Label
  */
 
-enchant.Label.prototype.delayText = function(delayTime) {
+enchant.Label.prototype.delayText = function (delayTime) {
     if (!this.arrayText) this.arrayText = [];
     this.arrayText = this.arrayText.concat(this.text.split(""));
     this.text = "";
     _this = this;
-    for (var i=0; i < this.arrayText.length; i++) {
-        setTimeout(function() {
+    for (var i = 0; i < this.arrayText.length; i++) {
+        setTimeout(function () {
             _this.text += _this.arrayText.shift();
         }, i * delayTime);
     }
@@ -316,13 +316,13 @@ enchant.Label.prototype.delayText = function(delayTime) {
 /**
  * Group
  */
-enchant.Group.prototype.setCenterNode = function(child, parent) {
+enchant.Group.prototype.setCenterNode = function (child, parent) {
     var _parentNode = parent || this.parentNode;
-    this.addEventListener(Event.ADDED_TO_SCENE, function(){
+    this.addEventListener(Event.ADDED_TO_SCENE, function () {
         this.x = ~~(_parentNode.width / 2) - ~~(child.width / 2) - child.x;
         this.y = ~~(_parentNode.height / 2) - ~~(child.height / 2) - child.y;
     });
-    this.addEventListener(Event.RENDER, function(){
+    this.addEventListener(Event.RENDER, function () {
         this.x = ~~(_parentNode.width / 2) - ~~(child.width / 2) - child.x;
         this.y = ~~(_parentNode.height / 2) - ~~(child.height / 2) - child.y;
     });
@@ -359,7 +359,60 @@ Object.defineProperty(enchant.Group.prototype, "scrollRotationEnabled", {
     }
 });
 
-enchant.Group.prototype.setScrollRange = function(child, padding) {
+enchant.Group.prototype._scrollRangeEnableLimit = false;
+Object.defineProperty(enchant.Group.prototype, "scrollRangeEnableLimit", {
+    get: function scrollRangeEnableLimit() {
+        return this._scrollRangeEnableLimit;
+    },
+    set: function scrollRangeEnableLimit(value) {
+        this._scrollRangeEnableLimit = value;
+    }
+});
+enchant.Group.prototype._scrollRangeLimitLeft = 0;
+Object.defineProperty(enchant.Group.prototype, "scrollRangeLimitLeft", {
+    get: function scrollRangeLimitLeft() {
+        return this._scrollRangeLimitLeft;
+    },
+    set: function scrollRangeLimitLeft(value) {
+        this._scrollRangeLimitLeft = value;
+    }
+});
+enchant.Group.prototype._scrollRangeLimitRight = 0;
+Object.defineProperty(enchant.Group.prototype, "scrollRangeLimitRight", {
+    get: function scrollRangeLimitRight() {
+        return this._scrollRangeLimitRight;
+    },
+    set: function scrollRangeLimitRight(value) {
+        this._scrollRangeLimitRight = value;
+    }
+});
+enchant.Group.prototype._scrollRangeLimitTop = 0;
+Object.defineProperty(enchant.Group.prototype, "scrollRangeLimitTop", {
+    get: function scrollRangeLimitTop() {
+        return this._scrollRangeLimitTop;
+    },
+    set: function scrollRangeLimitTop(value) {
+        this._scrollRangeLimitTop = value;
+    }
+});
+enchant.Group.prototype._scrollRangeLimitBottom = 0;
+Object.defineProperty(enchant.Group.prototype, "scrollRangeLimitBottom", {
+    get: function scrollRangeLimitBottom() {
+        return this._scrollRangeLimitBottom;
+    },
+    set: function scrollRangeLimitBottom(value) {
+        this._scrollRangeLimitBottom = value;
+    }
+});
+enchant.Group.prototype.setScrollRangeLimitX = function (limitLeft, limitRight) {
+    this._scrollRangeLimitLeft = limitLeft;
+    this._scrollRangeLimitRight = limitRight;
+}
+enchant.Group.prototype.setScrollRangeLimitY = function (limitTop, limitBottom) {
+    this._scrollRangeLimitTop = limitTop;
+    this._scrollRangeLimitBottom = limitBottom;
+}
+enchant.Group.prototype.setScrollRange = function (child, padding) {
     var core = enchant.Core.instance;
     this.width = this.width || core.rootScene.width;
     this.height = this.height || core.rootScene.height;
@@ -367,49 +420,65 @@ enchant.Group.prototype.setScrollRange = function(child, padding) {
     this.cancelScrollRange();
     var _padding = {
         top: isFinite(arguments[1])
-                ? arguments[1] : 0,
+            ? arguments[1] : 0,
         right: isFinite(arguments[2])
-                ? arguments[2] : isFinite(arguments[1])
+            ? arguments[2] : isFinite(arguments[1])
                 ? arguments[1] : 0,
         bottom: isFinite(arguments[3])
-                ? arguments[3] : isFinite(arguments[1])
+            ? arguments[3] : isFinite(arguments[1])
                 ? arguments[1] : 0,
         left: isFinite(arguments[4])
-                ? arguments[4] : isFinite(arguments[2])
+            ? arguments[4] : isFinite(arguments[2])
                 ? arguments[2] : isFinite(arguments[1])
-                ? arguments[1] : 0
+                    ? arguments[1] : 0
     };
-    // 対象が画面の表示領域からはみ出ようとした時にスクロールさせる
+    // paddingが設定可能最大値より大きい場合、paddingを再設定
     this._scrollRangeTarget = child;
-    this._scrollRange = function() {
+    if (_padding.left + _padding.right + this._scrollRangeTarget.width > this.width) {
+        var _diff = (_padding.left + _padding.right + this._scrollRangeTarget.width - this.width) / 2;
+        _padding.left -= _diff;
+        _padding.right -= _diff;
+    }
+    if (_padding.top + _padding.bottom + this._scrollRangeTarget.height > this.height) {
+        var _diff = (_padding.top + _padding.bottom + this._scrollRangeTarget.height - this.height) / 2;
+        _padding.top -= _diff;
+        _padding.bottom -= _diff;
+    }
+    // 対象が画面の表示領域からはみ出ようとした時にスクロールさせる
+    this._scrollRange = function () {
         if (!this._scrollRangeTarget || !this._scrollRangeTarget.parentNode) return;
         if (!this._scrollRangeTarget || !this._scrollRangeTarget.parentNode) this.cancelScrollRange();
-        // paddingが設定可能最大値より大きい場合、paddingを再設定
-        if (_padding.left + _padding.right + this._scrollRangeTarget.width > this.width) {
-            var _diff = (_padding.left + _padding.right + this._scrollRangeTarget.width - this.width) / 2;
-            _padding.left -= _diff;
-            _padding.right -= _diff;
-        }
-        if (_padding.top + _padding.bottom + this._scrollRangeTarget.height> this.height) {
-            var _diff = (_padding.top + _padding.bottom + this._scrollRangeTarget.height - this.height) / 2;
-            _padding.top -= _diff;
-            _padding.bottom -= _diff;
-        }
         // Left
-        if (_padding.left != null && this._scrollRangeTarget.x < _padding.left - this.x) {
+        if (this._scrollRangeEnableLimit && this.x == this._scrollRangeLimitLeft) {
+        } else if (this._scrollRangeEnableLimit && this.x > this._scrollRangeLimitLeft) {
+            this.x = this._scrollRangeLimitLeft;
+        } else if (_padding.left != null && this._scrollRangeTarget.x < _padding.left - this.x) {
             this.x += (_padding.left - this.x) - this._scrollRangeTarget.x;
+            this.x = Math.round(this.x);
         }
         // Right
-        if (_padding.right != null && this._scrollRangeTarget.x + this._scrollRangeTarget.width > this.width - _padding.right - this.x) {
+        if (this._scrollRangeEnableLimit && this.x == this.width - this._scrollRangeLimitRight) {
+        } else if (this._scrollRangeEnableLimit && this.x < this.width - this._scrollRangeLimitRight) {
+            this.x = this.width - this._scrollRangeLimitRight;
+        } else if (_padding.right != null && this._scrollRangeTarget.x + this._scrollRangeTarget.width > this.width - _padding.right - this.x) {
             this.x -= this._scrollRangeTarget.x + this._scrollRangeTarget.width - (this.width - _padding.right - this.x);
+            this.x = Math.round(this.x);
         }
         // Top
-        if (_padding.top != null && this._scrollRangeTarget.y < _padding.top - this.y) {
+        if (this._scrollRangeEnableLimit && this.y == this._scrollRangeLimitTop) {
+        } else if (this._scrollRangeEnableLimit && this.y > this._scrollRangeLimitTop) {
+            this.y = this._scrollRangeLimitTop;
+        } else if (_padding.top != null && this._scrollRangeTarget.y < _padding.top - this.y) {
             this.y += (_padding.top - this.y) - this._scrollRangeTarget.y;
+            this.y = Math.round(this.y);
         }
         // Bottom
-        if (_padding.bottom != null && this._scrollRangeTarget.y + this._scrollRangeTarget.height > this.height - _padding.bottom - this.y) {
+        if (this._scrollRangeEnableLimit && this.y == this.height - this._scrollRangeLimitBottom) {
+        } else if (this._scrollRangeEnableLimit && this.y < this.height - this._scrollRangeLimitBottom) {
+            this.y = this.height - this._scrollRangeLimitBottom;
+        } else if (_padding.bottom != null && this._scrollRangeTarget.y + this._scrollRangeTarget.height > this.height - _padding.bottom - this.y) {
             this.y -= this._scrollRangeTarget.y + this._scrollRangeTarget.height - (this.height - _padding.bottom - this.y);
+            this.y = Math.round(this.y);
         }
         if (this._scrollRotationEnabled) {
             this.originX = this.width / 2 - this.x;
@@ -419,7 +488,7 @@ enchant.Group.prototype.setScrollRange = function(child, padding) {
     }
     this.addEventListener(Event.ENTER_FRAME, this._scrollRange);
 };
-enchant.Group.prototype.cancelScrollRange = function() {
+enchant.Group.prototype.cancelScrollRange = function () {
     // EnterFrameを解除
     if (this._scrollRange) {
         this.removeEventListener(Event.ENTER_FRAME, this._scrollRange);
@@ -434,34 +503,34 @@ enchant.Group.prototype.cancelScrollRange = function() {
  * Map
  */
 enchant.Map.prototype._init = enchant.Map.prototype.initialize;
-enchant.Map.prototype.initialize = function(tileWidth, tileHeight) {
+enchant.Map.prototype.initialize = function (tileWidth, tileHeight) {
     this._init(tileWidth, tileHeight);
     this.childNodes = [];
-    this.addEventListener('render', function() {
+    this.addEventListener('render', function () {
         for (var i = 0, l = this.childNodes.length; i < l; i++) {
             this.childNodes[i]._dirty = true;
         }
     });
 };
-enchant.Map.prototype.addChild = function(node) {
-        if (node.parentNode) {
-            node.parentNode.removeChild(node);
-        }
-        this.childNodes.push(node);
-        node.parentNode = this;
-        var childAdded = new enchant.Event('childadded');
-        childAdded.node = node;
-        childAdded.next = null;
-        this.dispatchEvent(childAdded);
-        node.dispatchEvent(new enchant.Event('added'));
-        if (this.scene) {
-            node.scene = this.scene;
-            var addedToScene = new enchant.Event('addedtoscene');
-            node.dispatchEvent(addedToScene);
-        }
-        node._dirty = true;
+enchant.Map.prototype.addChild = function (node) {
+    if (node.parentNode) {
+        node.parentNode.removeChild(node);
+    }
+    this.childNodes.push(node);
+    node.parentNode = this;
+    var childAdded = new enchant.Event('childadded');
+    childAdded.node = node;
+    childAdded.next = null;
+    this.dispatchEvent(childAdded);
+    node.dispatchEvent(new enchant.Event('added'));
+    if (this.scene) {
+        node.scene = this.scene;
+        var addedToScene = new enchant.Event('addedtoscene');
+        node.dispatchEvent(addedToScene);
+    }
+    node._dirty = true;
 };
-enchant.Map.prototype.removeChild = function(node) {
+enchant.Map.prototype.removeChild = function (node) {
     var i;
     if ((i = this.childNodes.indexOf(node)) !== -1) {
         this.childNodes.splice(i, 1);
@@ -479,29 +548,29 @@ enchant.Map.prototype.removeChild = function(node) {
 };
 enchant.Map.prototype.setCenterNode = enchant.Group.prototype.setCenterNode;
 
-enchant.Map.prototype.tileMapParser = function(title) {
+enchant.Map.prototype.tileMapParser = function (title) {
     if (!TileMaps) throw new Error("TileMaps is undefined (Tiled Map Editor)");
 
     var _key;
     if (title) {
-       _key = title;
+        _key = title;
     } else {
-       _key = Object.keys(TileMaps)[0];
+        _key = Object.keys(TileMaps)[0];
     }
 
     var _aryData = [];
     var _aryCollision = [];
-    TileMaps[_key].layers.forEach(function(value, index) {
+    TileMaps[_key].layers.forEach(function (value, index) {
         if (value.type != "tilelayer") return;
         var _ary = [];
-        for (var i=0; i<value.height; i++) {
+        for (var i = 0; i < value.height; i++) {
             var _ary2 = [];
-            for (var j=0; j<value.width; j++) {
-            if (value.name == "collision") {
-                _ary2.push(value.data[value.width * i + j]);
-            } else {
-                _ary2.push(value.data[value.width * i + j]-1);
-            }
+            for (var j = 0; j < value.width; j++) {
+                if (value.name == "collision") {
+                    _ary2.push(value.data[value.width * i + j]);
+                } else {
+                    _ary2.push(value.data[value.width * i + j] - 1);
+                }
             }
             _ary.push(_ary2);
         }
@@ -618,15 +687,15 @@ enchant.Map.prototype.parseMap = function (title, collision, visible = true) {
  * Core
  */
 enchant.TRANSITION = {
-    NONE : "none",
-    FADE : "fade",
-    FADEOUT : "fadeout",
-    FADEIN : "fadein",
+    NONE: "none",
+    FADE: "fade",
+    FADEOUT: "fadeout",
+    FADEIN: "fadein",
 };
 window.TRANSITION = enchant.TRANSITION;
-enchant.Core.prototype.replaceScene = function(scene, transition=TRANSITION.NONE, fadetime=20, fadecolor="black") {
+enchant.Core.prototype.replaceScene = function (scene, transition = TRANSITION.NONE, fadetime = 20, fadecolor = "black") {
     var _this = this;
-    if (transition==TRANSITION.NONE) {
+    if (transition == TRANSITION.NONE) {
         this.popScene();
         return this.pushScene(scene);
     } else {
@@ -634,21 +703,21 @@ enchant.Core.prototype.replaceScene = function(scene, transition=TRANSITION.NONE
         fadeScene.backgroundColor = fadecolor;
         fadeScene.opacity = 0;
         this.currentScene.addChild(fadeScene);
-        if (transition!=TRANSITION.FADEIN) {
+        if (transition != TRANSITION.FADEIN) {
             fadeScene.tl.fadeIn(fadetime);
         } else {
             fadeScene.opacity = 1;
         }
-        fadeScene.tl.then(function() {
+        fadeScene.tl.then(function () {
             _this.popScene();
             scene.addChild(fadeScene);
             return _this.pushScene(scene);
         });
-        if (transition!=TRANSITION.FADEOUT) {
+        if (transition != TRANSITION.FADEOUT) {
             fadeScene.tl.delay(fadetime);
             fadeScene.tl.fadeOut(fadetime);
         }
-        fadeScene.tl.then(function() {
+        fadeScene.tl.then(function () {
             this.remove();
         });
     }
@@ -662,11 +731,11 @@ enchant.Core.prototype.replaceScene = function(scene, transition=TRANSITION.NONE
  *     console.log("dispatch KeyDown Event");
  * });
  */
-enchant.Group.prototype.addKeyDownEventListener = function(text, callback, length=255) {
+enchant.Group.prototype.addKeyDownEventListener = function (text, callback, length = 255) {
     var _addKeyDownEventListener;
     var _keyDownHistoryText;
     if (!_addKeyDownEventListener) {
-        _addKeyDownEventListener = function(e) {
+        _addKeyDownEventListener = function (e) {
             _keyDownHistoryText += e.key;
             if (_keyDownHistoryText.length > length) {
                 _keyDownHistoryText = _keyDownHistoryText.slice(1);
@@ -680,10 +749,10 @@ enchant.Group.prototype.addKeyDownEventListener = function(text, callback, lengt
         _keyDownHistoryText = "";
     }
     if (this.scene) {
-        this.scene.on(Event.ENTER, function() {
+        this.scene.on(Event.ENTER, function () {
             window.addEventListener("keydown", _addKeyDownEventListener);
         });
-        this.scene.on(Event.EXIT, function() {
+        this.scene.on(Event.EXIT, function () {
             window.removeEventListener("keydown", _addKeyDownEventListener);
         });
     } else {
