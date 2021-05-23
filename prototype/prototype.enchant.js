@@ -500,6 +500,380 @@ enchant.Group.prototype.cancelScrollRange = function () {
 };
 
 /**
+ * @scope enchant.Map.prototype
+ * enchant.js v0.8.3 から抜粋
+ */
+enchant.Map = enchant.Class.create(enchant.Entity, {
+    /**
+     * @name enchant.Map
+     * @class
+     * A class to create and display maps from a tile set.
+     * @param {Number} tileWidth Tile width.
+     * @param {Number} tileHeight Tile height.
+     * @constructs
+     * @extends enchant.Entity
+     */
+    initialize: function (tileWidth, tileHeight) {
+        var core = enchant.Core.instance;
+
+        enchant.Entity.call(this);
+
+        var surface = new enchant.Surface(core.width, core.height);
+        this._surface = surface;
+        var canvas = surface._element;
+        canvas.style.position = 'absolute';
+        if (enchant.ENV.RETINA_DISPLAY && core.scale === 2) {
+            canvas.width = core.width * 2;
+            canvas.height = core.height * 2;
+            this._style.webkitTransformOrigin = '0 0';
+            this._style.webkitTransform = 'scale(0.5)';
+        } else {
+            canvas.width = core.width;
+            canvas.height = core.height;
+        }
+        this._context = canvas.getContext('2d');
+
+        this._tileWidth = tileWidth || 0;
+        this._tileHeight = tileHeight || 0;
+        this._image = null;
+        this._data = [
+            [
+                []
+            ]
+        ];
+        this._dirty = false;
+        this._tight = false;
+
+        this.touchEnabled = false;
+
+        /**
+         * Two dimensional array to store if collision detection should be performed for a tile.
+         * @type Number[][]
+         */
+        this.collisionData = null;
+
+        this._listeners['render'] = null;
+        this.addEventListener('render', function () {
+            if (this._dirty) {
+                this._previousOffsetX = this._previousOffsetY = null;
+            }
+        });
+    },
+    /**
+     * Set map data.
+     * Sets the tile data, whereas the data (two-dimensional array with indizes starting from 0) 
+     * is mapped on the image starting from the upper left corner.
+     * When more than one map data array is set, they are displayed in reverse order.
+     * @param {...Number[][]} data Two-dimensional array of tile indizes. Multiple designations possible.
+     */
+    loadData: function (data) {
+        this._data = Array.prototype.slice.apply(arguments);
+        this._dirty = true;
+
+        this._tight = false;
+        for (var i = 0, len = this._data.length; i < len; i++) {
+            var c = 0;
+            data = this._data[i];
+            for (var y = 0, l = data.length; y < l; y++) {
+                for (var x = 0, ll = data[y].length; x < ll; x++) {
+                    if (data[y][x] >= 0) {
+                        c++;
+                    }
+                }
+            }
+            if (c / (data.length * data[0].length) > 0.2) {
+                this._tight = true;
+                break;
+            }
+        }
+    },
+    /**
+     * Checks what tile is present at the given position.
+     * @param {Number} x x coordinates of the point on the map.
+     * @param {Number} y y coordinates of the point on the map.
+     * @return {*} The tile data for the given position.
+     */
+    checkTile: function (x, y) {
+        if (x < 0 || this.width <= x || y < 0 || this.height <= y) {
+            return false;
+        }
+        var width = this._image.width;
+        var height = this._image.height;
+        var tileWidth = this._tileWidth || width;
+        var tileHeight = this._tileHeight || height;
+        x = x / tileWidth | 0;
+        y = y / tileHeight | 0;
+        //		return this._data[y][x];
+        var data = this._data[0];
+        return data[y][x];
+    },
+    /**
+     * Judges whether or not obstacles are on top of Map.
+     * @param {Number} x x coordinates of detection spot on map.
+     * @param {Number} y y coordinates of detection spot on map.
+     * @return {Boolean} True, if there are obstacles.
+     */
+    hitTest: function (x, y) {
+        if (x < 0 || this.width <= x || y < 0 || this.height <= y) {
+            return false;
+        }
+        var width = this._image.width;
+        var height = this._image.height;
+        var tileWidth = this._tileWidth || width;
+        var tileHeight = this._tileHeight || height;
+        x = x / tileWidth | 0;
+        y = y / tileHeight | 0;
+        if (this.collisionData != null) {
+            return this.collisionData[y] && !!this.collisionData[y][x];
+        } else {
+            for (var i = 0, len = this._data.length; i < len; i++) {
+                var data = this._data[i];
+                var n;
+                if (data[y] != null && (n = data[y][x]) != null &&
+                    0 <= n && n < (width / tileWidth | 0) * (height / tileHeight | 0)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    },
+    /**
+     * Image with which the tile set is displayed on the map.
+     * @type enchant.Surface
+     */
+    image: {
+        get: function () {
+            return this._image;
+        },
+        set: function (image) {
+            var core = enchant.Core.instance;
+
+            this._image = image;
+            if (enchant.ENV.RETINA_DISPLAY && core.scale === 2) {
+                var img = new enchant.Surface(image.width * 2, image.height * 2);
+                var tileWidth = this._tileWidth || image.width;
+                var tileHeight = this._tileHeight || image.height;
+                var row = image.width / tileWidth | 0;
+                var col = image.height / tileHeight | 0;
+                for (var y = 0; y < col; y++) {
+                    for (var x = 0; x < row; x++) {
+                        img.draw(image, x * tileWidth, y * tileHeight, tileWidth, tileHeight,
+                            x * tileWidth * 2, y * tileHeight * 2, tileWidth * 2, tileHeight * 2);
+                    }
+                }
+                this._doubledImage = img;
+            }
+            this._dirty = true;
+        }
+    },
+    /**
+     * Map tile width.
+     * @type Number
+     */
+    tileWidth: {
+        get: function () {
+            return this._tileWidth;
+        },
+        set: function (tileWidth) {
+            if (this._tileWidth !== tileWidth) {
+                this._tileWidth = tileWidth;
+                this._dirty = true;
+            }
+        }
+    },
+    /**
+     * Map tile height.
+     * @type Number
+     */
+    tileHeight: {
+        get: function () {
+            return this._tileHeight;
+        },
+        set: function (tileHeight) {
+            if (this._tileHeight !== tileHeight) {
+                this._tileHeight = tileHeight;
+                this._dirty = true;
+            }
+        }
+    },
+    /**
+     * @private
+     */
+    width: {
+        get: function () {
+            return this._tileWidth * this._data[0][0].length;
+        }
+    },
+    /**
+     * @private
+     */
+    height: {
+        get: function () {
+            return this._tileHeight * this._data[0].length;
+        }
+    },
+    /**
+     * @private
+     */
+    redraw: function (x, y, width, height) {
+        if (this._image == null) {
+            return;
+        }
+
+        var image, tileWidth, tileHeight, dx, dy;
+        if (this._doubledImage) {
+            image = this._doubledImage;
+            tileWidth = this._tileWidth * 2;
+            tileHeight = this._tileHeight * 2;
+            dx = -this._offsetX * 2;
+            dy = -this._offsetY * 2;
+            x *= 2;
+            y *= 2;
+            width *= 2;
+            height *= 2;
+        } else {
+            image = this._image;
+            tileWidth = this._tileWidth;
+            tileHeight = this._tileHeight;
+            dx = -this._offsetX;
+            dy = -this._offsetY;
+        }
+        var row = image.width / tileWidth | 0;
+        var col = image.height / tileHeight | 0;
+        var left = Math.max((x + dx) / tileWidth | 0, 0);
+        var top = Math.max((y + dy) / tileHeight | 0, 0);
+        var right = Math.ceil((x + dx + width) / tileWidth);
+        var bottom = Math.ceil((y + dy + height) / tileHeight);
+
+        var source = image._element;
+        var context = this._context;
+        var canvas = context.canvas;
+        context.clearRect(x, y, width, height);
+        for (var i = 0, len = this._data.length; i < len; i++) {
+            var data = this._data[i];
+            var r = Math.min(right, data[0].length);
+            var b = Math.min(bottom, data.length);
+            for (y = top; y < b; y++) {
+                for (x = left; x < r; x++) {
+                    var n = data[y][x];
+                    if (0 <= n && n < row * col) {
+                        var sx = (n % row) * tileWidth;
+                        var sy = (n / row | 0) * tileHeight;
+                        context.drawImage(source, sx, sy, tileWidth, tileHeight,
+                            x * tileWidth - dx, y * tileHeight - dy, tileWidth, tileHeight);
+                    }
+                }
+            }
+        }
+    },
+    /**
+     * @private
+     */
+    updateBuffer: function () {
+        if (this._visible === undefined || this._visible) {
+            var core = enchant.Core.instance;
+            if (this._dirty || this._previousOffsetX == null) {
+                this.redraw(0, 0, core.width, core.height);
+            } else if (this._offsetX !== this._previousOffsetX ||
+                this._offsetY !== this._previousOffsetY) {
+                if (this._tight) {
+                    var x = -this._offsetX;
+                    var y = -this._offsetY;
+                    var px = -this._previousOffsetX;
+                    var py = -this._previousOffsetY;
+                    var w1 = x - px + core.width;
+                    var w2 = px - x + core.width;
+                    var h1 = y - py + core.height;
+                    var h2 = py - y + core.height;
+                    if (w1 > this._tileWidth && w2 > this._tileWidth &&
+                        h1 > this._tileHeight && h2 > this._tileHeight) {
+                        var sx, sy, dx, dy, sw, sh;
+                        if (w1 < w2) {
+                            sx = 0;
+                            dx = px - x;
+                            sw = w1;
+                        } else {
+                            sx = x - px;
+                            dx = 0;
+                            sw = w2;
+                        }
+                        if (h1 < h2) {
+                            sy = 0;
+                            dy = py - y;
+                            sh = h1;
+                        } else {
+                            sy = y - py;
+                            dy = 0;
+                            sh = h2;
+                        }
+
+                        if (core._buffer == null) {
+                            core._buffer = document.createElement('canvas');
+                            core._buffer.width = this._context.canvas.width;
+                            core._buffer.height = this._context.canvas.height;
+                        }
+                        var context = core._buffer.getContext('2d');
+                        if (this._doubledImage) {
+                            context.clearRect(0, 0, sw * 2, sh * 2);
+                            context.drawImage(this._context.canvas,
+                                sx * 2, sy * 2, sw * 2, sh * 2, 0, 0, sw * 2, sh * 2);
+                            context = this._context;
+                            context.clearRect(dx * 2, dy * 2, sw * 2, sh * 2);
+                            context.drawImage(core._buffer,
+                                0, 0, sw * 2, sh * 2, dx * 2, dy * 2, sw * 2, sh * 2);
+                        } else {
+                            context.clearRect(0, 0, sw, sh);
+                            context.drawImage(this._context.canvas,
+                                sx, sy, sw, sh, 0, 0, sw, sh);
+                            context = this._context;
+                            context.clearRect(dx, dy, sw, sh);
+                            context.drawImage(core._buffer,
+                                0, 0, sw, sh, dx, dy, sw, sh);
+                        }
+
+                        if (dx === 0) {
+                            this.redraw(sw, 0, core.width - sw, core.height);
+                        } else {
+                            this.redraw(0, 0, core.width - sw, core.height);
+                        }
+                        if (dy === 0) {
+                            this.redraw(0, sh, core.width, core.height - sh);
+                        } else {
+                            this.redraw(0, 0, core.width, core.height - sh);
+                        }
+                    } else {
+                        this.redraw(0, 0, core.width, core.height);
+                    }
+                } else {
+                    this.redraw(0, 0, core.width, core.height);
+                }
+            }
+            this._previousOffsetX = this._offsetX;
+            this._previousOffsetY = this._offsetY;
+        }
+    },
+    cvsRender: function (ctx) {
+        if (this.width !== 0 && this.height !== 0) {
+            var core = enchant.Core.instance;
+            this.updateBuffer();
+            ctx.save();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            var cvs = this._context.canvas;
+            ctx.drawImage(cvs, 0, 0, core.width, core.height);
+            ctx.restore();
+        }
+    },
+    domRender: function (element) {
+        if (this._image) {
+            this.updateBuffer();
+            this._style['background-image'] = this._surface._css;
+            // bad performance
+            this._style[enchant.ENV.VENDOR_PREFIX + 'Transform'] = 'matrix(1, 0, 0, 1, 0, 0)';
+        }
+    }
+});
+
+/**
  * Map
  */
 enchant.Map.prototype._init = enchant.Map.prototype.initialize;
