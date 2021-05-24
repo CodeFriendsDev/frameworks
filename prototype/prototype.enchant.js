@@ -1067,36 +1067,92 @@ enchant.TRANSITION = {
     FADEIN: "fadein",
 };
 window.TRANSITION = enchant.TRANSITION;
-enchant.Core.prototype.replaceScene = function (scene, transition = TRANSITION.NONE, fadetime = 20, fadecolor = "black") {
+enchant.Core.prototype.replaceScene = function (scene, transition = TRANSITION.NONE, fadetime = 1000, fadecolor = "black") {
+    var _popScene = TRANSITION.NONE;
+    var _pushScene = TRANSITION.NONE;
+    if (transition == TRANSITION.FADE) {
+        _popScene = TRANSITION.FADEOUT;
+        _pushScene = TRANSITION.FADEIN;
+    } else if (transition == TRANSITION.FADEOUT) {
+        _popScene = TRANSITION.FADEOUT;
+    } else if (transition == TRANSITION.FADEIN) {
+        _pushScene = TRANSITION.FADEIN;
+    }
     var _this = this;
+    this.popScene(_popScene, fadetime, fadecolor, function () {
+        _this.pushScene(scene, _pushScene, fadetime, fadecolor);
+    });
+};
+enchant.Core.prototype._pushScene = enchant.Core.prototype.pushScene;
+enchant.Core.prototype.pushScene = function (scene, transition = TRANSITION.NONE, fadetime = 1000, fadecolor = "black", callback = function () { }) {
     if (transition == TRANSITION.NONE) {
-        this.popScene();
-        return this.pushScene(scene);
+        var ret = this._pushScene(scene);
+        callback();
+        return ret;
     } else {
-        var fadeScene = new Sprite(scene.width, scene.height);
-        fadeScene.backgroundColor = fadecolor;
-        fadeScene.opacity = 0;
-        this.currentScene.addChild(fadeScene);
-        if (transition != TRANSITION.FADEIN) {
-            fadeScene.tl.fadeIn(fadetime);
-        } else {
-            fadeScene.opacity = 1;
+        var _this = this;
+        var fadeScene = new Scene();
+        this._pushScene(fadeScene);
+        var background = new Sprite(this.currentScene.width, this.currentScene.height);
+        background.backgroundColor = fadecolor;
+        background.opacity = 0;
+        fadeScene.addChild(background);
+        background.tl.setTimeBased();
+        if (transition == TRANSITION.FADE || transition == TRANSITION.FADEOUT) {
+            background.tl.fadeIn(fadetime);
         }
-        fadeScene.tl.then(function () {
-            _this.popScene();
-            scene.addChild(fadeScene);
-            return _this.pushScene(scene);
+        background.tl.then(function () {
+            _this._popScene();
+            _this._pushScene(scene);
+            _this.currentScene.addChild(background);
         });
-        if (transition != TRANSITION.FADEOUT) {
-            fadeScene.tl.delay(fadetime);
-            fadeScene.tl.fadeOut(fadetime);
+        if (transition == TRANSITION.FADE || transition == TRANSITION.FADEIN) {
+            background.tl.then(function () {
+                background.opacity = 1;
+            });
+            background.tl.fadeOut(fadetime);
         }
-        fadeScene.tl.then(function () {
-            this.remove();
+        background.tl.then(function () {
+            callback();
         });
+        background.tl.removeFromScene();
     }
 };
-
+enchant.Core.prototype._popScene = enchant.Core.prototype.popScene;
+enchant.Core.prototype.popScene = function (transition = TRANSITION.NONE, fadetime = 1000, fadecolor = "black", callback = function () { }) {
+    if (transition == TRANSITION.NONE) {
+        var ret = this._popScene();
+        callback();
+        return ret;
+    } else {
+        var _this = this;
+        var fadeScene = new Scene();
+        this._pushScene(fadeScene);
+        var background = new Sprite(this.currentScene.width, this.currentScene.height);
+        background.backgroundColor = fadecolor;
+        background.opacity = 0;
+        fadeScene.addChild(background);
+        background.tl.setTimeBased();
+        if (transition == TRANSITION.FADE || transition == TRANSITION.FADEOUT) {
+            background.tl.fadeIn(fadetime);
+        }
+        background.tl.then(function () {
+            _this._popScene();
+            _this._popScene();
+            _this.currentScene.addChild(background);
+        });
+        if (transition == TRANSITION.FADE || transition == TRANSITION.FADEIN) {
+            background.tl.then(function () {
+                background.opacity = 1;
+            });
+            background.tl.fadeOut(fadetime);
+        }
+        background.tl.then(function () {
+            callback();
+        });
+        background.tl.removeFromScene();
+    }
+};
 /**
  * addKeyDownEventListener
  *
