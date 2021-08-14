@@ -480,9 +480,9 @@ enchant.Group.prototype.setScrollRange = function (child, padding) {
             this.y -= this._scrollRangeTarget.y + this._scrollRangeTarget.height - (this.height - _padding.bottom - this.y);
             this.y = Math.round(this.y);
         }
+        this.originX = this._scrollRangeTarget.x;
+        this.originY = this._scrollRangeTarget.y;
         if (this._scrollRotationEnabled) {
-            this.originX = this.width / 2 - this.x;
-            this.originY = this.height / 2 - this.y;
             this.rotation = this._scrollRotationAngle || -this._scrollRangeTarget.rotation;
         }
     }
