@@ -414,8 +414,8 @@ enchant.Group.prototype.setScrollRangeLimitY = function (limitTop, limitBottom) 
 }
 enchant.Group.prototype.setScrollRange = function (child, padding) {
     var core = enchant.Core.instance;
-    this.width = this.width || core.rootScene.width;
-    this.height = this.height || core.rootScene.height;
+    this.viewWidth = core.rootScene.width;
+    this.viewheight = core.rootScene.height;
     // EnterFrameを解除
     this.cancelScrollRange();
     var _padding = {
@@ -434,13 +434,13 @@ enchant.Group.prototype.setScrollRange = function (child, padding) {
     };
     // paddingが設定可能最大値より大きい場合、paddingを再設定
     this._scrollRangeTarget = child;
-    if (_padding.left + _padding.right + this._scrollRangeTarget.width > this.width) {
-        var _diff = (_padding.left + _padding.right + this._scrollRangeTarget.width - this.width) / 2;
+    if (_padding.left + _padding.right + this._scrollRangeTarget.width > this.viewWidth) {
+        var _diff = (_padding.left + _padding.right + this._scrollRangeTarget.width - this.viewWidth) / 2;
         _padding.left -= _diff;
         _padding.right -= _diff;
     }
-    if (_padding.top + _padding.bottom + this._scrollRangeTarget.height > this.height) {
-        var _diff = (_padding.top + _padding.bottom + this._scrollRangeTarget.height - this.height) / 2;
+    if (_padding.top + _padding.bottom + this._scrollRangeTarget.height > this.viewheight) {
+        var _diff = (_padding.top + _padding.bottom + this._scrollRangeTarget.height - this.viewheight) / 2;
         _padding.top -= _diff;
         _padding.bottom -= _diff;
     }
@@ -457,11 +457,11 @@ enchant.Group.prototype.setScrollRange = function (child, padding) {
             this.x = Math.round(this.x);
         }
         // Right
-        if (this._scrollRangeEnableLimit && this.x == this.width - this._scrollRangeLimitRight) {
-        } else if (this._scrollRangeEnableLimit && this.x < this.width - this._scrollRangeLimitRight) {
-            this.x = this.width - this._scrollRangeLimitRight;
-        } else if (_padding.right != null && this._scrollRangeTarget.x + this._scrollRangeTarget.width > this.width - _padding.right - this.x) {
-            this.x -= this._scrollRangeTarget.x + this._scrollRangeTarget.width - (this.width - _padding.right - this.x);
+        if (this._scrollRangeEnableLimit && this.x == this.viewWidth - this._scrollRangeLimitRight) {
+        } else if (this._scrollRangeEnableLimit && this.x < this.viewWidth - this._scrollRangeLimitRight) {
+            this.x = this.viewWidth - this._scrollRangeLimitRight;
+        } else if (_padding.right != null && this._scrollRangeTarget.x + this._scrollRangeTarget.width > this.viewWidth - _padding.right - this.x) {
+            this.x -= this._scrollRangeTarget.x + this._scrollRangeTarget.width - (this.viewWidth - _padding.right - this.x);
             this.x = Math.round(this.x);
         }
         // Top
@@ -473,11 +473,11 @@ enchant.Group.prototype.setScrollRange = function (child, padding) {
             this.y = Math.round(this.y);
         }
         // Bottom
-        if (this._scrollRangeEnableLimit && this.y == this.height - this._scrollRangeLimitBottom) {
-        } else if (this._scrollRangeEnableLimit && this.y < this.height - this._scrollRangeLimitBottom) {
-            this.y = this.height - this._scrollRangeLimitBottom;
-        } else if (_padding.bottom != null && this._scrollRangeTarget.y + this._scrollRangeTarget.height > this.height - _padding.bottom - this.y) {
-            this.y -= this._scrollRangeTarget.y + this._scrollRangeTarget.height - (this.height - _padding.bottom - this.y);
+        if (this._scrollRangeEnableLimit && this.y == this.viewheight - this._scrollRangeLimitBottom) {
+        } else if (this._scrollRangeEnableLimit && this.y < this.viewheight - this._scrollRangeLimitBottom) {
+            this.y = this.viewheight - this._scrollRangeLimitBottom;
+        } else if (_padding.bottom != null && this._scrollRangeTarget.y + this._scrollRangeTarget.height > this.viewheight - _padding.bottom - this.y) {
+            this.y -= this._scrollRangeTarget.y + this._scrollRangeTarget.height - (this.viewheight - _padding.bottom - this.y);
             this.y = Math.round(this.y);
         }
         this.originX = this._scrollRangeTarget.x;
