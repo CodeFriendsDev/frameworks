@@ -1190,3 +1190,23 @@ enchant.Group.prototype.addKeyDownEventListener = function (text, callback, leng
     }
 }
 enchant.Core.prototype.addKeyDownEventListener = enchant.Group.prototype.addKeyDownEventListener;
+
+/**
+ * Sound
+ */
+Object.defineProperty(enchant.DOMSound.prototype, "loop", {
+    get: function loop() {
+        return this._element.loop;
+    },
+    set: function loop(loop) {
+        this._element.loop = loop;
+    }
+});
+Object.defineProperty(enchant.WebAudioSound.prototype, "loop", {
+    get: function loop() {
+        return this.src.loop;
+    },
+    set: function loop(loop) {
+        this.src.loop = loop;
+    }
+});
