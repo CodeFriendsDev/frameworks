@@ -147,26 +147,30 @@ enchant.Entity.prototype._intersectStrictOne = function (other) {
  * 指定オブジェクト内でx方向の中央寄せを行う。
  * @param {Object} [another] 基準となるオブジェクト。（省略時は親Nodeとなる）
  */
-enchant.Entity.prototype.alignHorizontalCenterIn = function (another) {
-    var parentNode = this.parentNode;
-    if (another) parentNode = another;
-    if (parentNode) {
-        this.x = parentNode.x + ~~(parentNode.width / 2) - ~~(this.width / 2);
-    }
-    return this;
-};
+if (!enchant.Entity.prototype.alignHorizontalCenterIn) {
+    enchant.Entity.prototype.alignHorizontalCenterIn = function (another) {
+        var parentNode = this.parentNode;
+        if (another) parentNode = another;
+        if (parentNode) {
+            this.x = ~~(parentNode.width / 2) - ~~(this.width / 2);
+        }
+        return this;
+    };
+}
 /**
  * 指定オブジェクト内でy方向の中央寄せを行う。
  * @param {Object} [another] 基準となるオブジェクト。（省略時は親Nodeとなる）
  */
-enchant.Entity.prototype.alignVerticalCenterIn = function (another) {
-    var parentNode = this.parentNode;
-    if (another) parentNode = another;
-    if (parentNode) {
-        this.y = parentNode.y + ~~(parentNode.height / 2) - ~~(this.height / 2);
-    }
-    return this;
-};
+if (!enchant.Entity.prototype.alignVerticalCenterIn) {
+    enchant.Entity.prototype.alignVerticalCenterIn = function (another) {
+        var parentNode = this.parentNode;
+        if (another) parentNode = another;
+        if (parentNode) {
+            this.y = ~~(parentNode.height / 2) - ~~(this.height / 2);
+        }
+        return this;
+    };
+}
 
 
 /**
