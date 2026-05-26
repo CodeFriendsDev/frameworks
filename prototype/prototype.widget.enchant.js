@@ -3,6 +3,41 @@ enchant.widget.assets = [];
 
 enchant.widget._env.FLINGVEL = 1;
 
+enchant.widget._env.color = 'black';
+
+enchant.widget.parseContent = function (content, font, color) {
+    var en, metrics;
+    if (typeof content === 'undefined') {
+        content = '';
+    }
+    if (typeof content === 'number') {
+        content = '' + content;
+    }
+    if (content instanceof enchant.Entity) {
+    } else if (content instanceof enchant.Surface) {
+        en = new enchant.Sprite(content.width, content.height);
+        en.image = content;
+        content = en;
+    } else if (typeof content == 'string') {
+        en = new enchant.Label(content);
+        if (font) {
+            en.font = font;
+        } else {
+            en.font = enchant.widget._env.font;
+        }
+        if (color) {
+            en.color = color;
+        } else {
+            en.color = enchant.widget._env.color;
+        }
+        metrics = en.getMetrics();
+        en.width = metrics.width;
+        en.height = metrics.height;
+        content = en;
+    }
+    return content;
+}
+
 var NOTOUCH = 0;
 var WAITDBL = 1;
 var NOMOVE = 2;
